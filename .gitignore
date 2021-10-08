@@ -1,0 +1,122 @@
+*.class
+*.log
+/.metadata/
+
+# Created by https://www.gitignore.io/api/jboss,maven,eclipse
+# Edit at https://www.gitignore.io/?templates=jboss,maven,eclipse
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# CDT- autotools
+.autotools
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Annotation Processing
+.apt_generated/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+### Eclipse Patch ###
+# Eclipse Core
+.project
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Annotation Processing
+.apt_generated
+
+.sts4-cache/
+
+### JBoss ###
+jboss/server/all/deploy/project.ext
+jboss/server/default/deploy/project.ext
+jboss/server/minimal/deploy/project.ext
+jboss/server/all/log/*.log
+jboss/server/all/tmp/**/*
+jboss/server/all/data/**/*
+jboss/server/all/work/**/*
+jboss/server/default/log/*.log
+jboss/server/default/tmp/**/*
+jboss/server/default/data/**/*
+jboss/server/default/work/**/*
+jboss/server/minimal/log/*.log
+jboss/server/minimal/tmp/**/*
+jboss/server/minimal/data/**/*
+jboss/server/minimal/work/**/*
+
+# deployed package files #
+
+*.DEPLOYED
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+/SoapRest Clients/SeguridadClientREST/dist/
+/SoapRest Clients/SeguridadClientREST/nbproject/private/
+/SoapRest Clients/SeguridadClientREST/build/
+/SoapRest Clients/ClientesClientRest/nbproject/private/
+/SoapRest Clients/ClientesClientRest/build/
+/SoapRest Clients/ClientesClientRest/dist/
+/SoapRest Clients/B2AnexoDigital/nbproject/private/
+/SoapRest Clients/B2AnexoDigital/build/
+/SoapRest Clients/B2AnexoDigital/dist/
+/WsGenerate Netbeans/T24Facturasp2/dist/
+/SoapRest Clients/OlimpiaClientREST/nbproject/private/
+/SoapRest Clients/OlimpiaClientREST/build/
+/SoapRest Clients/OlimpiaClientREST/dist/
