@@ -98,9 +98,16 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW  {
 //		llamada1.setIncidentNumber("SUR-01848609-21");
 //		llamada1.setDuracion(9l);
 		
-		llamada1.setNumeroTelefonoIncidente("3112182793");
-		llamada1.setIncidentNumber("SUR-02003828-21");
+		//llamada1.setNumeroTelefonoIncidente("3112182793");
+		//llamada1.setIncidentNumber("SUR-02003828-21");
+		//llamada1.setDuracion(30l);
+		
+		llamada1.setNumeroTelefonoIncidente("3222271737");
+		llamada1.setIncidentNumber("SUR-02202069-21");
 		llamada1.setDuracion(30l);
+		
+		//2021-10-13T10:40:57.843Z
+		
 		
 		/*Calendar calendar =  GregorianCalendar.getInstance();
 		calendar.set(Calendar.YEAR, 2021);
@@ -114,11 +121,11 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW  {
 		
 		Calendar calendar =  GregorianCalendar.getInstance();
 		calendar.set(Calendar.YEAR, 2021);
-		calendar.set(Calendar.MONTH, 8);
-		calendar.set(Calendar.DAY_OF_MONTH, 16);
-		calendar.set(Calendar.HOUR_OF_DAY, 14);
-		calendar.set(Calendar.MINUTE, 55);
-		calendar.set(Calendar.SECOND, 00);
+		calendar.set(Calendar.MONTH, 9);
+		calendar.set(Calendar.DAY_OF_MONTH, 13);
+		calendar.set(Calendar.HOUR_OF_DAY, 10);
+		calendar.set(Calendar.MINUTE, 54);
+		calendar.set(Calendar.SECOND, 50);
 		calendar.set(Calendar.MILLISECOND, 00);
 		//2021-08-24T04:42:04.767Z
 		

@@ -52,8 +52,8 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 	private static final String PBX_LOGIN_ID = "PBX_LOGIN_ID";
 	private static final String COMMAND_TIMEOUT_SECONDS = "30";
 	private static final String PERIOD_TYPE = "Relative";
-	private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO = -3600;
-	private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES = 3600;
+	private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO = -60;
+	private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES = 60;
 
 	//private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO_DEFAULT = 86400;
 	private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES_DEFAULT = 86400;

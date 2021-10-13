@@ -46,6 +46,8 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 		boolean resultado = false;
 		List<SessionVerint> sesiones = null;
 		
+		
+		
 		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(new Date(), new Date());
 		LOG.info("Se consultan incidentes: " + (llamadas !=null ? llamadas.size() +"" : "0") + " encontrados");
 		
