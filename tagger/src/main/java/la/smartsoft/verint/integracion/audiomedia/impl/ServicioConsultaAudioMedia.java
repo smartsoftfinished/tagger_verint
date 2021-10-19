@@ -6,9 +6,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
 
@@ -26,6 +28,9 @@ import co.com.verint.audiomedia.ws.client.SessionDetails;
 import co.com.verint.audiomedia.ws.client.SessionMedia;
 import la.smartsoft.verint.integracion.audiomedia.IConsultarAudio;
 import la.smartsoft.verint.integracion.datamodelws.impl.ServiceLocator;
+import la.smartsoft.verint.integracion.token.IToken;
+import la.smartsoft.verint.integracion.token.dto.UsuarioToken;
+import la.smartsoft.verint.integracion.token.impl.ServicioToken;
 import la.smartsoft.verint.ws.rest.api.ConfiguracionApi;
 
 /**
@@ -46,14 +51,21 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 		List<String> audios = new ArrayList<String>();
  
 		try {
+			IToken tokenService = new ServicioToken();
+			UsuarioToken usuarioToken = new UsuarioToken();
+			usuarioToken.setUser(TOKEN_USUARIO);
+			usuarioToken.setPassword(TOKEN_CONTRASENIA);
+			TOKEN = tokenService.validarUsuario(usuarioToken);
 
-			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(ENDPOINT_VERINT_SOAP_AUDIO, 60000);
+			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(ENDPOINT_VERINT_SOAP_AUDIO, 60000, TOKEN.getToken());
 			LOG.info("siteId: " + siteId );
 			LOG.info("sessionId: " + sessionId );
 			
 			if (siteId == null || sessionId == null) {
 				return audios;
 			}	
+			
+			
 			
 			ObjectFactory objectFactory = new ObjectFactory();
 			
@@ -111,10 +123,11 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 	 * @return
 	 * @throws Exception
 	 */
-	public MediaUtilizationAPIWebServiceSoap getAudioMediaPort(String endPoint, Integer timeoutRequest) throws Exception {
+	public MediaUtilizationAPIWebServiceSoap getAudioMediaPort(String endPoint, Integer timeoutRequest, String token) throws Exception {
 
 		try {
 			MediaUtilizationAPIWebServiceSoap gatewayPort = (MediaUtilizationAPIWebServiceSoap) ServiceLocator.getService(WEB_SERVICE_AUDIO_MEDIA);
+			
 
 			// Si no se tiene el servicio en el cache, se instancia y se agrega
 			if (gatewayPort == null) {
@@ -129,7 +142,7 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 					LOG.info("Conectado a: "
 							+ bindingProvider.getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
 				}
-
+				
 				// Se define el timeout
 				definirTimeout(bindingProvider, timeoutRequest, timeoutRequest);
 
@@ -146,7 +159,13 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 				}
 				// Se define el timeout
 				definirTimeout(bindingProvider, timeoutRequest, timeoutRequest);
-			}
+
+				LOG.info("Antes de poner Token");
+				//Se setea el token
+				((Map)bindingProvider.getRequestContext().get(MessageContext.HTTP_REQUEST_HEADERS)).put("Impact360AuthToken", token);
+				LOG.info("Despues de poner Token");
+				
+			}	        
 
 			return gatewayPort;
 		} catch (Exception e) {
