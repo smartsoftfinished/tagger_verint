@@ -30,11 +30,13 @@ public class ServicioParametro implements IVerintParametro {
 		Connection conn = null;
 
 		try {
+			LOG.info("Se intenta obtener conexion a base PostgreSQL");
 			conn = new Conexion().crearConexion();
+			LOG.info("Conexion Establecida");
 			conn.setAutoCommit(false);
 
 			PreparedStatement smt = conn.prepareStatement(
-					"SELECT ID_PARAMETRO,NOMBRE,DESCRIPCION,VALOR,ESTADO,FECHA_CREACION,TIPO_PARAMETRO,CLASE_PARAMETRO FROM TAGGER_PARAMETRO WHERE ID_PARAMETRO= '"
+					"SELECT ID_PARAMETRO,NOMBRE,DESCRIPCION,VALOR,ESTADO,FECHA_CREACION,TIPO_PARAMETRO,CLASE_PARAMETRO FROM PARAMETRO_TAGGING WHERE ID_PARAMETRO= '"
 							+ idParametro + "' ");
 
 			System.out.print("Se consulto Exitosamente:  ");

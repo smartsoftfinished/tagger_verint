@@ -17,7 +17,7 @@ public class Test {
 
 			Date date = new Date(2021 - 03 - 12);
 
-			AuditoriaTaggingDTO r = new AuditoriaTaggingDTO(date, "4", "765432", "activo", "error");
+			AuditoriaTaggingDTO r = new AuditoriaTaggingDTO(date, "4", "765432", "activo", "error", 0l, 0l);
 
 			s.registrarAuditoria(r);
 
