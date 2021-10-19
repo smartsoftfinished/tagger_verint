@@ -1,12 +1,11 @@
 package la.smartsoft.verint.ws.rest.api.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RespuestaAudio {
 	
 	Boolean exitoso;
-	List<ErrorWS> errores;
+	ErrorWS error;
 	List<String> audios;
 
 	/**
@@ -23,19 +22,6 @@ public class RespuestaAudio {
 		this.audios = audios;
 	}
 
-	/**
-	 * @return
-	 */
-	public List<ErrorWS> getErrores() {
-		return errores;
-	}
-
-	/**
-	 * @param errores
-	 */
-	public void setErrores(List<ErrorWS> errores) {
-		this.errores = errores;
-	}
 
 	/**
 	 * @return
@@ -52,14 +38,17 @@ public class RespuestaAudio {
 	}
 	
 	/**
-	 * Permite agregar un error a la lista de errores
+	 * @return
+	 */
+	public ErrorWS getError() {
+		return error;
+	}
+
+	/**
 	 * @param error
 	 */
-	public void addError(ErrorWS error) {
-		if(errores == null) {
-			errores = new ArrayList<ErrorWS>();
-		}
-		errores.add(error);
+	public void setError(ErrorWS error) {
+		this.error = error;
 	}
 
 }
