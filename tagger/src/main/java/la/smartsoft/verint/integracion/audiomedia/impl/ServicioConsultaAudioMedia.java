@@ -3,7 +3,9 @@ package la.smartsoft.verint.integracion.audiomedia.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -159,10 +161,17 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 				}
 				// Se define el timeout
 				definirTimeout(bindingProvider, timeoutRequest, timeoutRequest);
+				
+				//Map<String, Object> headers = new HashMap<String, Object>();
+		        //headers.put("Impact360AuthToken", token);
+		        
+				//Se crea un header con el token en Impact360AuthToken
+		        Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		        headers.put("Impact360AuthToken", Collections.singletonList(token));
 
 				LOG.info("Antes de poner Token");
 				//Se setea el token
-				((Map)bindingProvider.getRequestContext().get(MessageContext.HTTP_REQUEST_HEADERS)).put("Impact360AuthToken", token);
+				bindingProvider.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				LOG.info("Despues de poner Token");
 				
 			}	        
