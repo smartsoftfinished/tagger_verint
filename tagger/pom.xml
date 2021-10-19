@@ -84,6 +84,13 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/VerintClientWSSoap.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>co.com.verint.audiomedia.ws.client</groupId>
+			<artifactId>audiomedia-verint-client</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/AudioMedia.jar</systemPath>
+		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>com.smartsoft.verint.tagger</groupId>

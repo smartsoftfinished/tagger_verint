@@ -3,36 +3,21 @@ package la.smartsoft.verint.integracion.datamodelws.impl;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.log4j.Logger;
 
-import co.com.verint.ws.client.ArrayOfEnvelope;
-import co.com.verint.ws.client.ArrayOfExtension;
 import co.com.verint.ws.client.ArrayOfstring;
-import co.com.verint.ws.client.AudioAcquisitionExtension;
-import co.com.verint.ws.client.Data;
 import co.com.verint.ws.client.DataModelWCF;
-import co.com.verint.ws.client.Envelope;
-import co.com.verint.ws.client.Header;
 import co.com.verint.ws.client.IDataModelWS;
 import co.com.verint.ws.client.ObjectFactory;
-import co.com.verint.ws.client.PrivateDataExtension;
-import co.com.verint.ws.client.TelephonyContactExtension;
-import co.com.verint.ws.client.TelephonySessionExtension;
 import co.com.verint.ws.client.TransactionMode;
-import co.com.verint.ws.client.UserExtension;
 import la.smartsoft.verint.integracion.daswebapi.dto.SessionVerint;
 import la.smartsoft.verint.integracion.datamodelws.IActualizacionVerint;
-import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
 import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
 import la.smartsoft.verint.integracion.db.verint.impl.ServicioAuditoria;
 import la.smartsoft.verint.ws.rest.api.ConfiguracionApi;

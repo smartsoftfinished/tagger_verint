@@ -1,11 +1,13 @@
 package la.smartsoft.verint.integracion.db.verint.impl;
 
 import java.sql.Connection;
-
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -144,5 +146,77 @@ public class ServicioAuditoria implements IVerintDB {
 			System.out.println(e.getMessage());
 			System.out.print("No se actualizo la Auditoria: ");
 		}
+	}
+
+	@Override
+	public Map<String, Object> consultarInformacionAudio(String incidentNumber) {
+		
+		//Respuesta
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		
+		//Coxiones, Statemente y ResultSet
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		
+		try {
+			LOG.info("Inicia consultarInformacionAudio INCIDENT_NUMBER : " + incidentNumber);
+			
+			//Se abre conexión
+			conn = new Conexion().crearConexion();
+			conn.setAutoCommit(false);
+			
+			//Query
+			String query = " SELECT SITE_ID, SESSION_ID FROM AUDITORIA_TAGGING WHERE INCIDENT_NUMBER = ? ";
+			
+			//Se crea Prepared Statement
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, incidentNumber);
+			
+			//Se ejecuta Query
+			rs =stmt.executeQuery();
+
+			if (rs.next()) {
+				LOG.info("Se encuentra información para consulta de INCIDENT_NUMBER : " + incidentNumber);
+				respuesta.put("siteId", rs.getString("SITE_ID"));
+				respuesta.put("sessionId", rs.getString("SESSION_ID"));
+				LOG.info("siteId" + respuesta.get("siteId"));
+				LOG.info("sessionId" + respuesta.get("sessionId"));
+			}else {
+				LOG.info("NO se encuentra información para consulta de INCIDENT_NUMBER : " + incidentNumber);
+			}
+
+			LOG.info("Termina consultarInformacionAudio INCIDENT_NUMBER : " + incidentNumber);
+			
+		}  catch (Exception e) {
+			LOG.error("Termina con error consultarInformacionAudio: INCIDENT_NUMBER : " + incidentNumber);
+			LOG.error(e.getMessage());
+			LOG.error(e);
+			e.printStackTrace();
+		}finally {
+			if(rs !=null) {
+				try {
+					rs.close();
+				} catch (Exception e2) {
+					
+				}				
+			}
+			if(stmt !=null) {
+				try {
+					stmt.close();
+				} catch (Exception e2) {
+					
+				}				
+			}		
+			if(conn !=null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					
+				}				
+			}				
+		}
+		return respuesta;
 	}
 }
