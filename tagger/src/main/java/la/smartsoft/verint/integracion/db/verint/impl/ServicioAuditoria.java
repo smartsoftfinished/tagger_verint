@@ -101,11 +101,11 @@ public class ServicioAuditoria implements IVerintDB {
 			String query = "UPDATE AUDITORIA_TAGGING SET";
 			int fields = 0;
 			if (audit.getEstado() != null) {
-				query += " ESTADO = " + audit.getEstado();
+				query += " ESTADO = '" + audit.getEstado() + "'";
 				fields++;
 			}
 			if (audit.getMensajeError() != null) {
-				query += (fields > 0 ? ", " : " ") + "MENSAJE_ERROR = " + audit.getMensajeError();
+				query += (fields > 0 ? ", " : " ") + "MENSAJE_ERROR = '" + audit.getMensajeError() + "'";
 				fields++;
 			}
 			if (audit.getSessionId() != null) {
@@ -116,7 +116,7 @@ public class ServicioAuditoria implements IVerintDB {
 				query += (fields > 0 ? ", " : " ") + "SITE_ID = " + audit.getSiteId();
 				fields++;
 			}
-			query += " WHERE INCIDENT_NUMBER = " + audit.getIncidentNumber();
+			query += " WHERE INCIDENT_NUMBER = '" + audit.getIncidentNumber() + "'";
 
 			stmt = conn.createStatement();
 			stmt.executeUpdate(query);

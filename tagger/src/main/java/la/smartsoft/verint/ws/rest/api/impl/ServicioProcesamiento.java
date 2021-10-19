@@ -53,20 +53,22 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 
 		LOG.info("Se intenta consumir el parametro segundos antes");
 		ParametroDTO segundosAntes = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_ATRAS);
-		LOG.info("Se consume el parametro segundos antes");
+		LOG.info("Se consume el parametro segundos antes " + segundosAntes.getValor());
 
 		LOG.info("Se intenta consumir el parametro rango busqueda");
 		ParametroDTO rangoBusqueda = servicioParametro.consultarParametro(ParametroDTO.RANGO_CONSULTA);
 		LOG.info("Se consume el parametro rango busqueda");
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, -Integer.parseInt(segundosAntes.getValor()));
+		LOG.info("Fecha inicio antes de resta" + calendar.getTime());
+		calendar.add(Calendar.HOUR, -(Integer.parseInt(segundosAntes.getValor())));
+		LOG.info("Fecha inicio es " + calendar.getTime());
 
-		Date fin = calendar.getTime();
+		Date inicio = calendar.getTime();
 
-		calendar.add(Calendar.SECOND, -Integer.parseInt(rangoBusqueda.getValor()));
+		calendar.add(Calendar.SECOND, Integer.parseInt(rangoBusqueda.getValor()));
 
-		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(calendar.getTime(), fin);
+		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(inicio, calendar.getTime());
 		// List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(new Date(), new
 		// Date());
 		LOG.info("Se consultan incidentes: " + (llamadas != null ? llamadas.size() + "" : "0") + " encontrados");
@@ -105,12 +107,14 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 
 			// 3. Se hace el Tagging
 			// 3.1 Asignar Incidente en Datos Sesion
-			taguearSession(llamada, sesiones);
+			// taguearSession(llamada, sesiones);
 
 			// 3.2 Actualizar Sesion con el nuevo Dato
-			LOG.info("Antes Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente());
-			resultado = actualizacionVerintService.actualizarVerint(sesiones);
-			LOG.info("Fin Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente() + " " + resultado);
+			// LOG.info("Antes Actualizacion Verint: " +
+			// llamada.getNumeroTelefonoIncidente());
+			// resultado = actualizacionVerintService.actualizarVerint(sesiones);
+			// LOG.info("Fin Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente()
+			// + " " + resultado);
 
 			LOG.info("Termina Procesamiento: " + llamada.toString());
 		}

@@ -55,14 +55,14 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			// Se consulta numero maximo de registros a buscar
 			ServicioParametro servicioParametro = new ServicioParametro();
 
-			LOG.info("Se intenta consumir el parametro segundos antes");
+			LOG.info("Se intenta consumir el parametro registros maximos");
 			ParametroDTO numRegistros = servicioParametro.consultarParametro(ParametroDTO.REGISTROS_MAXIMOS);
-			LOG.info("Se consume el parametro segundos antes");
+			LOG.info("Se consume el parametro registros maximos");
 			// Implementar consulta SQLServer
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
 			String query = "select top " + numRegistros.getValor()
-					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
+					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos_v "
 					+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'";
 			LOG.info(query);
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar("Númeroincidente", new StringType())
@@ -71,14 +71,13 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			session.close();
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 
-			AuditoriaTaggingDTO auditoria;
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 			List<LlamadaDTO> lista = new ArrayList<LlamadaDTO>();
 			for (Object[] object : queryRta) {
 				if (object != null) {
 					LlamadaDTO llamadaDTO = new LlamadaDTO();
 					llamadaDTO.setIncidentNumber((String) object[0]);
-					llamadaDTO.setNumeroTelefonoIncidente(((String) object[1]).replace(" ", ""));
+					llamadaDTO.setNumeroTelefonoIncidente(((String) object[1]).replaceAll("\\s", ""));
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
 					llamadaDTO.setFechaRegistro((object[3] != null ? (Date) object[3] : null));
 					lista.add(llamadaDTO);
@@ -94,6 +93,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			return lista;
 		} catch (Exception e) {
 			LOG.error(e);
+			e.printStackTrace();
 		}
 
 		LOG.info("Fin obtenerLlamadas Null");

@@ -299,8 +299,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				ArrayOfstring array = objectFactory.createArrayOfstring();
 				array.getString().add(sb.toString());
 				serviceVerint.processEx(array, TransactionMode.NONE);
-				servicioAuditoria.actualizarAuditoria(new AuditoriaTaggingDTO(null, sesion.getCd2(), null, "PROCESADO",
-						null, sesion.getSid(), sesion.getSite_id()));
+				servicioAuditoria.actualizarAuditoria(
+						new AuditoriaTaggingDTO(null, sesion.getCd2(), null, "PROCESADO", null, null, null));
 				LOG.info("Termina Correctamente Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
 			} catch (Exception e) {
 				LOG.error("Error En Servicio Tagging " + sesion);

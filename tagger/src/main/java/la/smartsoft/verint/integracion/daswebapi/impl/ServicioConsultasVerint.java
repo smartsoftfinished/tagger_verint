@@ -2,6 +2,7 @@ package la.smartsoft.verint.integracion.daswebapi.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,7 +35,9 @@ import la.smartsoft.verint.integracion.daswebapi.dto.RequestDynamicQuery;
 import la.smartsoft.verint.integracion.daswebapi.dto.ResponseDynamicQuery;
 import la.smartsoft.verint.integracion.daswebapi.dto.SessionVerint;
 import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
+import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
 import la.smartsoft.verint.integracion.db.verint.dto.ParametroDTO;
+import la.smartsoft.verint.integracion.db.verint.impl.ServicioAuditoria;
 import la.smartsoft.verint.integracion.db.verint.impl.ServicioParametro;
 import la.smartsoft.verint.integracion.token.dto.Token;
 import la.smartsoft.verint.ws.rest.api.ConfiguracionApi;
@@ -110,7 +113,24 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 
 						// String rta = response.getEntity();
 						Map map = response.readEntity(Map.class);
-						return obtenerRespuestaSesiones(map);
+						List<SessionVerint> sesiones = obtenerRespuestaSesiones(map);
+						SessionVerint sessionVerint;
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+						ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+						if (sesiones != null && !sesiones.isEmpty()) {
+							sessionVerint = sesiones.get(0);
+							for (SessionVerint sv : sesiones) {
+								Date act = format.parse(sessionVerint.getAUDIO_START_TIME());
+								Date svf = format.parse(sv.getAUDIO_START_TIME());
+								if (svf.after(act))
+									sessionVerint = sv;
+							}
+							servicioAuditoria.actualizarAuditoria(
+									new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "CONSULTADO", null,
+											sessionVerint.getSid(), sessionVerint.getSite_id()));
+							return Arrays.asList(sessionVerint);
+						}
+						return sesiones;
 						// ResponseDynamicQuery responseDQ =
 						// response.readEntity(ResponseDynamicQuery.class);
 
@@ -147,7 +167,6 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 	 */
 	public List<SessionVerint> obtenerRespuestaSesiones(Map map) {
 		List<SessionVerint> respuesta = new ArrayList<SessionVerint>();
-
 		try {
 
 			if (map != null && !map.isEmpty()) {
@@ -247,6 +266,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 							}
 							LOG.info(sesionRta.toString());
 							respuesta.add(sesionRta);
+
 						}
 					} else {
 						LOG.info("Lista no tenia SESIONES");
@@ -362,7 +382,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			ParametroDTO segundosConsulta = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_CONSULTA);
 			LOG.info("Se consume el parametro segundos consulta");
 
-			calIni.add(Calendar.SECOND, Integer.parseInt(segundosConsulta.getValor()));
+			calIni.add(Calendar.SECOND, -Integer.parseInt(segundosConsulta.getValor()));
 			// calFin.add(Calendar.SECOND,
 			// CANTIDAD_SEGUNDOS_QUERY_DESPUES + (llamada.getDuracion() != null ?
 			// llamada.getDuracion().intValue()

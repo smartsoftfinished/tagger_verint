@@ -32,7 +32,6 @@ public class SessionVerint {
 	private @JsonProperty("interaction_type") String interaction_type;
 	private @JsonProperty("audio_ch_num") String audio_ch_num;
 	private @JsonProperty("site_id") Long site_id;
-	// TODO: verificas si el sid es el session_id
 	private @JsonProperty("sid") Long sid;
 
 	/**
@@ -347,13 +346,36 @@ public class SessionVerint {
 
 	@Override
 	public String toString() {
-		return "[exception_reason: " + exception_reason + ", call_id: " + call_id + ", personal_id: " + personal_id
-				+ ", string_extension: " + string_extension + ", pbx_login_id: " + pbx_login_id + ", dnis: " + dnis
-				+ ", total_hold_time_in_seconds: " + total_hold_time_in_seconds + ", switch_id: " + switch_id
-				+ ", ani: " + ani + ", direction: " + direction + ", switch_call_id: " + switch_call_id + ", cd17: "
-				+ cd17 + ", cd2: " + cd2 + ", audio_end_time: " + audio_end_time + ", media_type_bit_mask: "
-				+ media_type_bit_mask + ", AUDIO_START_TIME: " + AUDIO_START_TIME + ", wrapup_time_in_seconds: "
-				+ wrapup_time_in_seconds + ", audio_module_num: " + audio_module_num + ", interaction_type: "
-				+ interaction_type + ", audio_ch_num: " + audio_ch_num + "]";
+		return "{" + " exception_reason='" + getException_reason() + "'" + ", call_id='" + getCall_id() + "'"
+				+ ", personal_id='" + getPersonal_id() + "'" + ", string_extension='" + getString_extension() + "'"
+				+ ", pbx_login_id='" + getPbx_login_id() + "'" + ", dnis='" + getDnis() + "'"
+				+ ", total_hold_time_in_seconds='" + getTotal_hold_time_in_seconds() + "'" + ", switch_id='"
+				+ getSwitch_id() + "'" + ", ani='" + getAni() + "'" + ", number_of_holds='" + getNumber_of_holds() + "'"
+				+ ", direction='" + getDirection() + "'" + ", switch_call_id='" + getSwitch_call_id() + "'" + ", cd17='"
+				+ getCd17() + "'" + ", cd2='" + getCd2() + "'" + ", audio_end_time='" + getAudio_end_time() + "'"
+				+ ", media_type_bit_mask='" + getMedia_type_bit_mask() + "'" + ", AUDIO_START_TIME='"
+				+ getAUDIO_START_TIME() + "'" + ", wrapup_time_in_seconds='" + getWrapup_time_in_seconds() + "'"
+				+ ", audio_module_num='" + getAudio_module_num() + "'" + ", interaction_type='" + getInteraction_type()
+				+ "'" + ", audio_ch_num='" + getAudio_ch_num() + "'" + ", site_id='" + getSite_id() + "'" + ", sid='"
+				+ getSid() + "'" + "}";
 	}
+
+	// @Override
+	// public String toString() {
+	// return "[exception_reason: " + exception_reason + ", call_id: " + call_id +
+	// ", personal_id: " + personal_id
+	// + ", string_extension: " + string_extension + ", pbx_login_id: " +
+	// pbx_login_id + ", dnis: " + dnis
+	// + ", total_hold_time_in_seconds: " + total_hold_time_in_seconds + ",
+	// switch_id: " + switch_id
+	// + ", ani: " + ani + ", direction: " + direction + ", switch_call_id: " +
+	// switch_call_id + ", cd17: "
+	// + cd17 + ", cd2: " + cd2 + ", audio_end_time: " + audio_end_time + ",
+	// media_type_bit_mask: "
+	// + media_type_bit_mask + ", AUDIO_START_TIME: " + AUDIO_START_TIME + ",
+	// wrapup_time_in_seconds: "
+	// + wrapup_time_in_seconds + ", audio_module_num: " + audio_module_num + ",
+	// interaction_type: "
+	// + interaction_type + ", audio_ch_num: " + audio_ch_num + "]";
+	// }
 }
