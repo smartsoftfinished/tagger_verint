@@ -24,6 +24,7 @@ public abstract class ConfiguracionApi {
 	private static final String CFG_ENDPOINT_VERINT_REST_TOKEN = "config.endpoint.verint.rest.token";
 	private static final String CFG_ENDPOINT_VERINT_REST_QUERY = "config.endpoint.verint.rest.query";
 	private static final String CFG_ENDPOINT_VERINT_SOAP_TAGGING = "config.endpoint.verint.soap.tagging";
+	private static final String CFG_ENDPOINT_VERINT_SOAP_AUDIO = "config.endpoint.verint.soap.audio";
 	private static final String CFG_DATASOURCE_VERINT_RDW = "datasource.verint.rdw";
 	private static final String CFG_DATASOURCE_VERINT_TAGGER = "datasource.verint.tagger";
 	private static final String CFG_AMBIENTE_PRODUCCION = "ambiente.produccion";
@@ -39,6 +40,7 @@ public abstract class ConfiguracionApi {
 	protected String ENDPOINT_VERINT_REST_TOKEN;
 	protected String ENDPOINT_VERINT_REST_QUERY;
 	protected String ENDPOINT_VERINT_SOAP_TAGGING;
+	protected String ENDPOINT_VERINT_SOAP_AUDIO;
 	protected String DATASOURCE_VERINT_RDW;
 	protected String DATASOURCE_VERINT_TAGGER;
 	protected Boolean AMBIENTE_PRODUCCION;
@@ -69,6 +71,9 @@ public abstract class ConfiguracionApi {
 		// Endpoint para realizar tagging en Verint (Asociarle un incidente a una
 		// llamada)
 		ENDPOINT_VERINT_SOAP_TAGGING = configuracion.getProperty(CFG_ENDPOINT_VERINT_SOAP_TAGGING);
+		
+		//Endpoint Query Audios
+		ENDPOINT_VERINT_SOAP_AUDIO = configuracion.getProperty(CFG_ENDPOINT_VERINT_SOAP_AUDIO);
 
 		// Datasource para acceso a RDW
 		DATASOURCE_VERINT_RDW = configuracion.getProperty(CFG_DATASOURCE_VERINT_RDW);

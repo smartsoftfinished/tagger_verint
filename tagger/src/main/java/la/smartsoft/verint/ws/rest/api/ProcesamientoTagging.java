@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -75,38 +76,41 @@ public class ProcesamientoTagging extends ConfiguracionApi {
 		return salida;
 	}
 
-	@Path("/audio")
+	@Path("/audio/{incidentNumber}")
 	@GET
-	// @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	//@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes("text/plain")
-	public RespuestaAudio consultarAudio(@Context HttpServletRequest headers, String incidentNumber) {
-
+	public RespuestaAudio consultarAudio(
+			@Context HttpServletRequest headers, @PathParam("incidentNumber") String incidentNumber
+			) {
+		
 		RespuestaAudio salida = new RespuestaAudio();
-
+		
 		try {
 			LOG.info("Inicio consultarAudio ");
-
+			
 			IVerintDB consultaBD = new ServicioAuditoria();
 			Map<String, Object> rta = consultaBD.consultarInformacionAudio(incidentNumber);
-
-			if (rta.get("siteId") != null && rta.get("sessionId") != null) {
+			if(rta.get("siteId")!=null && rta.get("sessionId")!=null) {
+				
 				IConsultarAudio audioService = new ServicioConsultaAudioMedia();
-				List<String> audios = audioService.consultarAudio(Integer.valueOf((String) rta.get("siteId")),
-						Integer.valueOf((String) rta.get("sessionId")));
+				List<String> audios = audioService.consultarAudio(Integer.valueOf( (String) rta.get("siteId")), Integer.valueOf( (String) rta.get("sessionId")) );
+				//List<String> audios = audioService.consultarAudio(Integer.valueOf( "23778393"), Integer.valueOf( "427") );
+				
 				salida.setAudios(audios);
 				salida.setExitoso(Boolean.TRUE);
-			} else {
+			}else {
 				salida.setExitoso(Boolean.FALSE);
 				ErrorWS error = new ErrorWS();
 				error.setCodigoError("ERR_TAGGER_002");
 				error.setDescripcionError("No se encontraron sesiones para el incidente");
 				salida.setError(error);
 			}
-
-			LOG.info("Termino consultarAudio ");
+			
+			LOG.info("Termino consultarAudio ");			
 			return salida;
-
+			
 		} catch (Exception e) {
 			ErrorWS errorWS = new ErrorWS();
 			errorWS.setCodigoError("ERR_TAGGER_001");
@@ -115,7 +119,7 @@ public class ProcesamientoTagging extends ConfiguracionApi {
 			salida.setExitoso(Boolean.FALSE);
 			return salida;
 		}
-
+		
 	}
 
 }

@@ -47,7 +47,7 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
  
 		try {
 
-			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(WEB_SERVICE_AUDIO_MEDIA, 60000);
+			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(ENDPOINT_VERINT_SOAP_AUDIO, 60000);
 			LOG.info("siteId: " + siteId );
 			LOG.info("sessionId: " + sessionId );
 			
