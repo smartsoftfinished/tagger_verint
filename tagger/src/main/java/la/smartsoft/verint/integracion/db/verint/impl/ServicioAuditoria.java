@@ -58,14 +58,10 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setSessionId(rs.getLong("SESSION_ID"));
 				auditor.setSiteId(rs.getLong("SITE_ID"));
 				auditoria.add(auditor);
+				System.out.println(auditor);
 				System.out.println("guardado ok: ");
 			}
-
-			for (int i = 0; i < auditoria.size(); i++) {
-
-				System.out.println(auditoria.get(i));
-			}
-
+			conn.commit();
 		} catch (Exception e) {
 			LOG.error("Termina con ERROR actualizarAuditoria : " + audit.getIncidentNumber());
 			LOG.error(e.getMessage());
@@ -81,11 +77,11 @@ public class ServicioAuditoria implements IVerintDB {
 					LOG.error(e2);
 				}
 			}
-			if (conn != null) {
+			if (stmt != null) {
 				try {
-					conn.close();
+					stmt.close();
 				} catch (Exception e2) {
-					LOG.error("Error cerrando Conexion : " + audit.getIncidentNumber());
+					LOG.error("Error cerrando Statement : " + audit.getIncidentNumber());
 					LOG.error(e2.getMessage());
 					LOG.error(e2);
 				}
@@ -141,13 +137,10 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setSessionId(rs.getLong("SESSION_ID"));
 				auditor.setSiteId(rs.getLong("SITE_ID"));
 				auditoria.add(auditor);
+				System.out.println(auditor);
 				System.out.println("actualizacion ok: ");
 			}
-
-			for (int i = 0; i < auditoria.size(); i++) {
-
-				System.out.println(auditoria.get(i));
-			}
+			conn.commit();
 
 		} catch (Exception e) {
 			LOG.error("Termina con ERROR actualizarAuditoria : " + audit.getIncidentNumber());

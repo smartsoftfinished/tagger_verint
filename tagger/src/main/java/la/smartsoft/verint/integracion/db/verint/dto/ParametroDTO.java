@@ -8,6 +8,7 @@ public class ParametroDTO {
 	public static int SEGUNDOS_ATRAS = 1;
 	public static int RANGO_CONSULTA = 2;
 	public static int SEGUNDOS_CONSULTA = 3;
+	public static int REGISTROS_MAXIMOS = 5;
 
 	private static int count = 0;
 	private int idParametro;

@@ -14,12 +14,15 @@ import org.hibernate.Session;
 import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
+import org.hibernate.type.TimestampType;
 
 import la.smartsoft.verint.integracion.db.rdw.IRDW;
 import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
 import la.smartsoft.verint.integracion.db.rdw.utils.HibernateUtil;
 import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
+import la.smartsoft.verint.integracion.db.verint.dto.ParametroDTO;
 import la.smartsoft.verint.integracion.db.verint.impl.ServicioAuditoria;
+import la.smartsoft.verint.integracion.db.verint.impl.ServicioParametro;
 import la.smartsoft.verint.ws.rest.api.ConfiguracionApi;
 
 /**
@@ -49,20 +52,24 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			// Calendar calendar = Calendar.getInstance();
 			// calendar.add(Calendar.HOUR_OF_DAY, -23);
 			// inicio = calendar.getTime();
+			// Se consulta numero maximo de registros a buscar
+			ServicioParametro servicioParametro = new ServicioParametro();
 
+			LOG.info("Se intenta consumir el parametro segundos antes");
+			ParametroDTO numRegistros = servicioParametro.consultarParametro(ParametroDTO.REGISTROS_MAXIMOS);
+			LOG.info("Se consume el parametro segundos antes");
 			// Implementar consulta SQLServer
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
-			String query = "select Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
+			String query = "select top " + numRegistros.getValor()
+					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
 					+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'";
 			LOG.info(query);
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar("Númeroincidente", new StringType())
 					.addScalar("LLAMANTE_Teléfono", new StringType()).addScalar("Duration", new LongType())
-					.addScalar("FechaIncidente", new DateType()).list();
+					.addScalar("FechaIncidente", new TimestampType()).list();
 			session.close();
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
-			if (queryRta.size() > 0)
-				return new ArrayList<>();
 
 			AuditoriaTaggingDTO auditoria;
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
@@ -71,7 +78,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 				if (object != null) {
 					LlamadaDTO llamadaDTO = new LlamadaDTO();
 					llamadaDTO.setIncidentNumber((String) object[0]);
-					llamadaDTO.setNumeroTelefonoIncidente((String) object[1]);
+					llamadaDTO.setNumeroTelefonoIncidente(((String) object[1]).replace(" ", ""));
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
 					llamadaDTO.setFechaRegistro((object[3] != null ? (Date) object[3] : null));
 					lista.add(llamadaDTO);
