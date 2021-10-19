@@ -26,47 +26,44 @@ import la.smartsoft.verint.ws.rest.api.dto.RespuestaAudio;
 import la.smartsoft.verint.ws.rest.api.impl.ServicioProcesamiento;
 
 @Path("/servicios")
-public class ProcesamientoTagging extends ConfiguracionApi{
+public class ProcesamientoTagging extends ConfiguracionApi {
 
 	private static final Logger LOG = Logger.getLogger(ProcesamientoTagging.class);
-	
+
 	/* Errores que se devuelven en caso de que existan de acuerdo al contexto */
 	private static final String ERROR_PROCEMIENTO = "Ha ocurrido un error general durante el proceso";
 	private static final String ERROR_BD = "Ha ocurrido un error con la base de datos, por favor contacte con el administrador";
 	private static final String ERROR_GENERAL = "Ha ocurrido un error general, por favor contacte con el administrador";
-	
+
 	private static final String ERR_NEGOCIO = "01";
 	private static final String ERR_SISTEMA = "02";
-	
+
 	public ProcesamientoTagging() throws IOException {
 		super();
 	}
-	
+
 	@Path("/procesar")
 	@GET
-	//@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes("text/plain")
 	public ParametrosSalida procesar(
-			//@Context HttpServletRequest headers, ParametrosEntrada entrada
-			) {
+	// @Context HttpServletRequest headers, ParametrosEntrada entrada
+	) {
 		ParametrosSalida salida = new ParametrosSalida();
 		try {
 			LOG.info("Inicio procesamiento ");
-			
+
 			IProcesamientoTagging procesamiento = new ServicioProcesamiento();
 			procesamiento.procesar();
-			
+
 			salida.setExitoso(Boolean.TRUE);
 			LOG.info("Termino procesamiento ");
-		} /*catch (SQLException e) {
-			ErrorWS errorWS = new ErrorWS();
-			errorWS.setCodigoError(ERR_SISTEMA);
-			errorWS.setDescripcionError(ERROR_BD);
-			salida.addError(errorWS);
-			salida.setExitoso(Boolean.FALSE);
-			return salida;
-		} */catch (Exception e) {
+		} /*
+			 * catch (SQLException e) { ErrorWS errorWS = new ErrorWS();
+			 * errorWS.setCodigoError(ERR_SISTEMA); errorWS.setDescripcionError(ERROR_BD);
+			 * salida.addError(errorWS); salida.setExitoso(Boolean.FALSE); return salida; }
+			 */catch (Exception e) {
 			ErrorWS errorWS = new ErrorWS();
 			errorWS.setCodigoError(ERR_SISTEMA);
 			errorWS.setDescripcionError(ERROR_PROCEMIENTO);
@@ -74,44 +71,42 @@ public class ProcesamientoTagging extends ConfiguracionApi{
 			salida.setExitoso(Boolean.FALSE);
 			return salida;
 		}
-		
+
 		return salida;
 	}
-	
 
 	@Path("/audio")
 	@GET
-	//@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes("text/plain")
-	public RespuestaAudio consultarAudio(
-			@Context HttpServletRequest headers, String incidentNumber
-			) {
-		
+	public RespuestaAudio consultarAudio(@Context HttpServletRequest headers, String incidentNumber) {
+
 		RespuestaAudio salida = new RespuestaAudio();
-		
+
 		try {
 			LOG.info("Inicio consultarAudio ");
-			
+
 			IVerintDB consultaBD = new ServicioAuditoria();
 			Map<String, Object> rta = consultaBD.consultarInformacionAudio(incidentNumber);
-			
-			if(rta.get("siteId")!=null && rta.get("sessionId")!=null) {
+
+			if (rta.get("siteId") != null && rta.get("sessionId") != null) {
 				IConsultarAudio audioService = new ServicioConsultaAudioMedia();
-				List<String> audios = audioService.consultarAudio(Integer.valueOf( (String) rta.get("siteId")), Integer.valueOf( (String) rta.get("sessionId")) );
+				List<String> audios = audioService.consultarAudio(Integer.valueOf((String) rta.get("siteId")),
+						Integer.valueOf((String) rta.get("sessionId")));
 				salida.setAudios(audios);
 				salida.setExitoso(Boolean.TRUE);
-			}else {
+			} else {
 				salida.setExitoso(Boolean.FALSE);
 				ErrorWS error = new ErrorWS();
 				error.setCodigoError("ERR_TAGGER_002");
-				error.setDescripcionError("No se encontró session para el incidente");
+				error.setDescripcionError("No se encontrÃ³ session para el incidente");
 				salida.getErrores().add(error);
 			}
-			
-			LOG.info("Termino consultarAudio ");			
+
+			LOG.info("Termino consultarAudio ");
 			return salida;
-			
+
 		} catch (Exception e) {
 			ErrorWS errorWS = new ErrorWS();
 			errorWS.setCodigoError("ERR_TAGGER_002");
@@ -120,8 +115,7 @@ public class ProcesamientoTagging extends ConfiguracionApi{
 			salida.setExitoso(Boolean.FALSE);
 			return salida;
 		}
-		
-	}
 
+	}
 
 }

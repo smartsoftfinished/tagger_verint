@@ -9,9 +9,11 @@ public interface IVerintDB {
 	public void registrarAuditoria(AuditoriaTaggingDTO auditoriaTagging);
 
 	public void actualizarAuditoria(AuditoriaTaggingDTO auditoriaTagging);
-	
+
 	/**
-	 * Permite retornar la información que se requiere para consultar un audio como el siteId y sessionId (sid), a partir de un número de incidente
+	 * Permite retornar la informaciÃ³n que se requiere para consultar un audio como
+	 * el siteId y sessionId (sid), a partir de un nÃºmero de incidente
+	 * 
 	 * @param incidentNumber
 	 * @return
 	 */

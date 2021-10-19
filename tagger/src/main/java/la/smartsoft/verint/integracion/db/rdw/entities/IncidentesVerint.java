@@ -20,7 +20,7 @@ public class IncidentesVerint {
 	private Date FechaIncidente;
 
 	@Column(name = "Duration")
-	private String duracion;
+	private Long duracion;
 
 	// @Column
 	// private String Localidad;
@@ -79,11 +79,11 @@ public class IncidentesVerint {
 		this.FechaIncidente = FechaIncidente;
 	}
 
-	public String getDuracion() {
+	public Long getDuracion() {
 		return this.duracion;
 	}
 
-	public void setDuracion(String duracion) {
+	public void setDuracion(Long duracion) {
 		this.duracion = duracion;
 	}
 

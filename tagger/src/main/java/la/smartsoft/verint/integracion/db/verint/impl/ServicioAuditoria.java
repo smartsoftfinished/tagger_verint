@@ -150,72 +150,71 @@ public class ServicioAuditoria implements IVerintDB {
 
 	@Override
 	public Map<String, Object> consultarInformacionAudio(String incidentNumber) {
-		
-		//Respuesta
+
+		// Respuesta
 		Map<String, Object> respuesta = new HashMap<String, Object>();
-		
-		//Coxiones, Statemente y ResultSet
+
+		// Coxiones, Statemente y ResultSet
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
-		
 		try {
 			LOG.info("Inicia consultarInformacionAudio INCIDENT_NUMBER : " + incidentNumber);
-			
-			//Se abre conexión
+
+			// Se abre conexiÃ³n
 			conn = new Conexion().crearConexion();
 			conn.setAutoCommit(false);
-			
-			//Query
+
+			// Query
 			String query = " SELECT SITE_ID, SESSION_ID FROM AUDITORIA_TAGGING WHERE INCIDENT_NUMBER = ? ";
-			
-			//Se crea Prepared Statement
+
+			// Se crea Prepared Statement
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, incidentNumber);
-			
-			//Se ejecuta Query
-			rs =stmt.executeQuery();
+
+			// Se ejecuta Query
+			rs = stmt.executeQuery();
 
 			if (rs.next()) {
-				LOG.info("Se encuentra información para consulta de INCIDENT_NUMBER : " + incidentNumber);
+				LOG.info("Se encuentra informaciÃ³n para consulta de INCIDENT_NUMBER : " + incidentNumber);
 				respuesta.put("siteId", rs.getString("SITE_ID"));
 				respuesta.put("sessionId", rs.getString("SESSION_ID"));
 				LOG.info("siteId" + respuesta.get("siteId"));
 				LOG.info("sessionId" + respuesta.get("sessionId"));
-			}else {
-				LOG.info("NO se encuentra información para consulta de INCIDENT_NUMBER : " + incidentNumber);
+			} else {
+				LOG.info("NO se encuentra informaciÃ³n para consulta de INCIDENT_NUMBER : " + incidentNumber);
 			}
 
 			LOG.info("Termina consultarInformacionAudio INCIDENT_NUMBER : " + incidentNumber);
-			
-		}  catch (Exception e) {
+
+		} catch (Exception e) {
 			LOG.error("Termina con error consultarInformacionAudio: INCIDENT_NUMBER : " + incidentNumber);
 			LOG.error(e.getMessage());
 			LOG.error(e);
 			e.printStackTrace();
-		}finally {
-			if(rs !=null) {
+		} finally {
+			if (rs != null) {
 				try {
 					rs.close();
 				} catch (Exception e2) {
-					
-				}				
+
+				}
 			}
-			if(stmt !=null) {
+			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (Exception e2) {
-					
-				}				
-			}		
-			if(conn !=null) {
+
+				}
+			}
+			if (conn != null) {
 				try {
 					conn.close();
 				} catch (Exception e2) {
-					
-				}				
-			}				
+
+				}
+			}
 		}
 		return respuesta;
 	}

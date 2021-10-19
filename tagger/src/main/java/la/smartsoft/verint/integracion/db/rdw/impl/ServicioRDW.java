@@ -11,6 +11,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.log4j.helpers.DateTimeDateFormat;
 import org.hibernate.Session;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 
 import la.smartsoft.verint.integracion.db.rdw.IRDW;
 import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
@@ -50,10 +53,12 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			// Implementar consulta SQLServer
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
-			List<Object[]> queryRta = session.createSQLQuery(
-					"select Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, cast(FechaIncidente as date) FechaIncidente from dbo.Datos_basicos "
-							+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'")
-					.list();
+			String query = "select Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
+					+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'";
+			LOG.info(query);
+			List<Object[]> queryRta = session.createSQLQuery(query).addScalar("Númeroincidente", new StringType())
+					.addScalar("LLAMANTE_Teléfono", new StringType()).addScalar("Duration", new LongType())
+					.addScalar("FechaIncidente", new DateType()).list();
 			session.close();
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 			if (queryRta.size() > 0)

@@ -62,11 +62,11 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, -Integer.parseInt(segundosAntes.getValor()));
 
-		Date inicio = calendar.getTime();
+		Date fin = calendar.getTime();
 
 		calendar.add(Calendar.SECOND, -Integer.parseInt(rangoBusqueda.getValor()));
 
-		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(inicio, calendar.getTime());
+		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(calendar.getTime(), fin);
 		// List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(new Date(), new
 		// Date());
 		LOG.info("Se consultan incidentes: " + (llamadas != null ? llamadas.size() + "" : "0") + " encontrados");
