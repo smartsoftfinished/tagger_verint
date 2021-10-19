@@ -3,7 +3,6 @@ package la.smartsoft.verint.integracion.db.verint.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,14 +28,14 @@ public class ServicioAuditoria implements IVerintDB {
 	@SuppressWarnings("static-access")
 	@Override
 	public void registrarAuditoria(AuditoriaTaggingDTO audit) {
-		Connection c = null;
+		Connection conn = null;
 		Statement stmt = null;
 		try {
 
-			c = new Conexion().crearConexion();
-			c.setAutoCommit(false);
+			conn = new Conexion().crearConexion();
+			conn.setAutoCommit(false);
 
-			stmt = c.createStatement();
+			stmt = conn.createStatement();
 			stmt.executeUpdate(
 					"INSERT INTO  AUDITORIA_TAGGING(FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID) VALUES ('"
 							+ audit.getFechaRegistro() + "', '" + audit.getIncidentNumber() + "', '"
@@ -67,27 +66,42 @@ public class ServicioAuditoria implements IVerintDB {
 				System.out.println(auditoria.get(i));
 			}
 
-			rs.close();
-			stmt.close();
-			c.commit();
-			c.close();
-
-		} catch (ClassNotFoundException e) {
-
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			System.out.print("No se Registro la Auditoria: ");
+		}  catch (Exception e) {
+			LOG.error("Termina con ERROR actualizarAuditoria : " + audit.getIncidentNumber());
+			LOG.error(e.getMessage());
+			LOG.error(e);
+			e.printStackTrace();
+		}finally {
+			if(stmt !=null) {
+				try {
+					stmt.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Statement : " + audit.getIncidentNumber());
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}				
+			}		
+			if(conn !=null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Conexion : " + audit.getIncidentNumber());
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}				
+			}				
 		}
+		
 	}
 
 	@Override
 	public void actualizarAuditoria(AuditoriaTaggingDTO audit) {
-		Connection c = null;
+		Connection conn = null;
 		Statement stmt = null;
 		try {
 
-			c = new Conexion().crearConexion();
-			c.setAutoCommit(false);
+			conn = new Conexion().crearConexion();
+			conn.setAutoCommit(false);
 			String query = "UPDATE AUDITORIA_TAGGING SET";
 			int fields = 0;
 			if (audit.getEstado() != null) {
@@ -108,7 +122,7 @@ public class ServicioAuditoria implements IVerintDB {
 			}
 			query += " WHERE INCIDENT_NUMBER = " + audit.getIncidentNumber();
 
-			stmt = c.createStatement();
+			stmt = conn.createStatement();
 			stmt.executeUpdate(query);
 
 			System.out.print("Se ha registrado Exitosamente: ");
@@ -135,16 +149,30 @@ public class ServicioAuditoria implements IVerintDB {
 				System.out.println(auditoria.get(i));
 			}
 
-			rs.close();
-			stmt.close();
-			c.commit();
-			c.close();
-
-		} catch (ClassNotFoundException e) {
-
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			System.out.print("No se actualizo la Auditoria: ");
+		}  catch (Exception e) {
+			LOG.error("Termina con ERROR actualizarAuditoria : " + audit.getIncidentNumber());
+			LOG.error(e.getMessage());
+			LOG.error(e);
+			e.printStackTrace();
+		}finally {
+			if(stmt !=null) {
+				try {
+					stmt.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Statement : " + audit.getIncidentNumber());
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}				
+			}		
+			if(conn !=null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Conexion : " + audit.getIncidentNumber());
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}				
+			}				
 		}
 	}
 
@@ -190,7 +218,7 @@ public class ServicioAuditoria implements IVerintDB {
 			LOG.info("Termina consultarInformacionAudio INCIDENT_NUMBER : " + incidentNumber);
 			
 		}  catch (Exception e) {
-			LOG.error("Termina con error consultarInformacionAudio: INCIDENT_NUMBER : " + incidentNumber);
+			LOG.error("Termina con ERROR consultarInformacionAudio: INCIDENT_NUMBER : " + incidentNumber);
 			LOG.error(e.getMessage());
 			LOG.error(e);
 			e.printStackTrace();
@@ -199,21 +227,27 @@ public class ServicioAuditoria implements IVerintDB {
 				try {
 					rs.close();
 				} catch (Exception e2) {
-					
+					LOG.error("Error cerrando ResulSet : " + incidentNumber);
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
 				}				
 			}
 			if(stmt !=null) {
 				try {
 					stmt.close();
 				} catch (Exception e2) {
-					
+					LOG.error("Error cerrando Statement : " + incidentNumber);
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
 				}				
 			}		
 			if(conn !=null) {
 				try {
 					conn.close();
 				} catch (Exception e2) {
-					
+					LOG.error("Error cerrando Conexion : " + incidentNumber);
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
 				}				
 			}				
 		}
