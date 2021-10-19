@@ -6,7 +6,7 @@
         <property name="hibernate.connection.password">Data2020*</property>
         <property name="hibernate.connection.url">jdbc:sqlserver://10.218.1.118:1433;databaseName=Datafeed_Datatraffic</property>
         <property name="hibernate.connection.username">datatraffic</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-        <!-- <mapping class="la.smartsoft.verint.integracion.db.rdw.entities.IncidentesVerint" /> -->
+        <property name="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</property>
+        <mapping class="la.smartsoft.verint.integracion.db.rdw.entities.IncidentesVerint" />
     </session-factory>
 </hibernate-configuration>

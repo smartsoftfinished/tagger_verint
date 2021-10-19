@@ -9,50 +9,82 @@ import javax.persistence.Id;
 
 @Entity(name = "DATOS_BASICOS")
 public class IncidentesVerint {
-
-	@Column
-	private Date FechaIncidente;
-
-	@Column
-	private String TipoIncidente;
-
-	@Column
-	private String Agencia;
-
-	@Column
-	private String Localidad;
-
-	@Column
-	private String Jurisdiccion;
-
-	@Column
-	private int X_COORD;
-
-	@Column
-	private int Y_COORD;
-
-	@Column
-	private Date Timestamp;
-
 	@Id
 	@Column(name = "Númeroincidente")
 	private String IncidentNumber;
 
-	@Column
-	private int PrioridadInicial;
+	@Column(name = "LLAMANTE_Teléfono")
+	private String llamanteTelefono;
 
-	@Column
-	private Date FechaCierre;
+	@Column(name = "FechaIncidente")
+	private Date FechaIncidente;
 
-	@Column
-	private Long Duracion;
+	@Column(name = "Duration")
+	private String duracion;
 
-	@Column
-	private String RecursoAsignado;
+	// @Column
+	// private String Localidad;
 
-	@Column
-	private String NumeroTelefonoIncidente;
+	// @Column
+	// private String Jurisdiccion;
 
-	@Column
-	private String Barrio;
+	// @Column
+	// private int X_COORD;
+
+	// @Column
+	// private int Y_COORD;
+
+	// @Column
+	// private Date Timestamp;
+
+	// @Column
+	// private int PrioridadInicial;
+
+	// @Column
+	// private Date FechaCierre;
+
+	// @Column
+	// private Long Duracion;
+
+	// @Column
+	// private String RecursoAsignado;
+
+	// @Column
+	// private String NumeroTelefonoIncidente;
+
+	// @Column
+	// private String Barrio;
+
+	public String getIncidentNumber() {
+		return this.IncidentNumber;
+	}
+
+	public void setIncidentNumber(String IncidentNumber) {
+		this.IncidentNumber = IncidentNumber;
+	}
+
+	public String getLlamanteTelefono() {
+		return this.llamanteTelefono;
+	}
+
+	public void setLlamanteTelefono(String llamanteTelefono) {
+		this.llamanteTelefono = llamanteTelefono;
+	}
+
+	public Date getFechaIncidente() {
+		return this.FechaIncidente;
+	}
+
+	public void setFechaIncidente(Date FechaIncidente) {
+		this.FechaIncidente = FechaIncidente;
+	}
+
+	public String getDuracion() {
+		return this.duracion;
+	}
+
+	public void setDuracion(String duracion) {
+		this.duracion = duracion;
+	}
+
 }

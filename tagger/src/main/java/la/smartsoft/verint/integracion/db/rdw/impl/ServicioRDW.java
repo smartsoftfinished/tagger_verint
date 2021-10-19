@@ -51,10 +51,13 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
 			List<Object[]> queryRta = session.createSQLQuery(
-					"select Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
+					"select Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, cast(FechaIncidente as date) FechaIncidente from dbo.Datos_basicos "
 							+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'")
 					.list();
 			session.close();
+			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
+			if (queryRta.size() > 0)
+				return new ArrayList<>();
 
 			AuditoriaTaggingDTO auditoria;
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
