@@ -105,8 +105,8 @@ public class ProcesamientoTagging extends ConfiguracionApi{
 				salida.setExitoso(Boolean.FALSE);
 				ErrorWS error = new ErrorWS();
 				error.setCodigoError("ERR_TAGGER_002");
-				error.setDescripcionError("No se encontró session para el incidente");
-				salida.getErrores().add(error);
+				error.setDescripcionError("No se encontraron sesiones para el incidente");
+				salida.setError(error);
 			}
 			
 			LOG.info("Termino consultarAudio ");			
@@ -114,9 +114,9 @@ public class ProcesamientoTagging extends ConfiguracionApi{
 			
 		} catch (Exception e) {
 			ErrorWS errorWS = new ErrorWS();
-			errorWS.setCodigoError("ERR_TAGGER_002");
+			errorWS.setCodigoError("ERR_TAGGER_001");
 			errorWS.setDescripcionError("Error general : " + e.getMessage());
-			salida.addError(errorWS);
+			salida.setError(errorWS);
 			salida.setExitoso(Boolean.FALSE);
 			return salida;
 		}
