@@ -1,6 +1,7 @@
 package la.smartsoft.verint.ws.rest.api.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,9 @@ import la.smartsoft.verint.integracion.datamodelws.impl.ServicioActualizacionVer
 import la.smartsoft.verint.integracion.db.rdw.IRDW;
 import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
 import la.smartsoft.verint.integracion.db.rdw.impl.ServicioRDW;
+import la.smartsoft.verint.integracion.db.verint.dto.HorarioDTO;
 import la.smartsoft.verint.integracion.db.verint.dto.ParametroDTO;
+import la.smartsoft.verint.integracion.db.verint.impl.ServicioHorario;
 import la.smartsoft.verint.integracion.db.verint.impl.ServicioParametro;
 import la.smartsoft.verint.integracion.token.IToken;
 import la.smartsoft.verint.integracion.token.dto.UsuarioToken;
@@ -49,28 +52,59 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 		boolean resultado = false;
 		List<SessionVerint> sesiones = null;
 
-		ServicioParametro servicioParametro = new ServicioParametro();
+		// ServicioParametro servicioParametro = new ServicioParametro();
 
-		LOG.info("Se intenta consumir el parametro segundos antes");
-		ParametroDTO segundosAntes = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_ATRAS);
-		LOG.info("Se consume el parametro segundos antes " + segundosAntes.getValor());
+		// LOG.info("Se intenta consumir el parametro segundos antes");
+		// ParametroDTO parametroSA =
+		// servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_ATRAS);
+		// int segundosAntes = -(Integer.parseInt(parametroSA.getValor()));
+		// LOG.info("Se consume el parametro segundos antes " + segundosAntes);
 
-		LOG.info("Se intenta consumir el parametro rango busqueda");
-		ParametroDTO rangoBusqueda = servicioParametro.consultarParametro(ParametroDTO.RANGO_CONSULTA);
-		LOG.info("Se consume el parametro rango busqueda");
+		// LOG.info("Se intenta consumir el parametro rango busqueda");
+		// ParametroDTO parametroRB =
+		// servicioParametro.consultarParametro(ParametroDTO.RANGO_CONSULTA);
+		// int rangoBusqueda = Integer.parseInt(parametroRB.getValor());
+		// LOG.info("Se consume el parametro rango busqueda " + rangoBusqueda);
 
-		Calendar calendar = Calendar.getInstance();
-		LOG.info("Fecha inicio antes de resta" + calendar.getTime());
-		calendar.add(Calendar.HOUR, -(Integer.parseInt(segundosAntes.getValor())));
-		LOG.info("Fecha inicio es " + calendar.getTime());
+		// Calendar calendar = Calendar.getInstance();
+		// LOG.info("Fecha inicio antes de resta" + calendar.getTime());
+		// calendar.add(Calendar.HOUR, segundosAntes);
+		// LOG.info("Fecha inicio es " + calendar.getTime());
 
-		Date inicio = calendar.getTime();
+		// Date inicio = calendar.getTime();
 
-		calendar.add(Calendar.SECOND, Integer.parseInt(rangoBusqueda.getValor()));
+		// calendar.add(Calendar.SECOND, rangoBusqueda);
 
-		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(inicio, calendar.getTime());
+		// List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(inicio,
+		// calendar.getTime());
 		// List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(new Date(), new
 		// Date());
+
+		ServicioHorario servicioHorario = new ServicioHorario();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
+		HorarioDTO horario = servicioHorario.consultarHorario(calendar.getTime());
+		Calendar inicio = Calendar.getInstance();
+		if (calendar.get(Calendar.HOUR_OF_DAY) <= 5)
+			inicio.add(Calendar.DATE, -2);
+		else
+			inicio.add(Calendar.DATE, -1);
+		inicio.set(Calendar.HOUR_OF_DAY, horario.getInicio().getHour());
+		inicio.set(Calendar.MINUTE, horario.getInicio().getMinute());
+		inicio.set(Calendar.SECOND, horario.getInicio().getSecond());
+		inicio.set(Calendar.MILLISECOND, 0);
+		Calendar fin = Calendar.getInstance();
+		fin.setTime(inicio.getTime());
+		fin.set(Calendar.HOUR_OF_DAY, horario.getFin().getHour());
+		fin.set(Calendar.MINUTE, horario.getFin().getMinute());
+		fin.set(Calendar.SECOND, horario.getFin().getSecond());
+		fin.set(Calendar.MILLISECOND, 0);
+		if (fin.get(Calendar.HOUR_OF_DAY) == 0)
+			fin.add(Calendar.DATE, 1);
+
+		List<LlamadaDTO> llamadas = rdwService.obtenerLlamadas(inicio.getTime(), fin.getTime());
 		LOG.info("Se consultan incidentes: " + (llamadas != null ? llamadas.size() + "" : "0") + " encontrados");
 
 		for (LlamadaDTO llamada : llamadas) {

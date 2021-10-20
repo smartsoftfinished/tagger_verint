@@ -30,6 +30,8 @@ public class AuditoriaTaggingDTO {
 		this.numeroTelefono = numeroTelefono;
 		this.estado = estado;
 		this.mensajeError = mensajeError;
+		this.sessionId = idSesion;
+		this.siteId = idSite;
 	}
 
 	public Long getSessionId() {

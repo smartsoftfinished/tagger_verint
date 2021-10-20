@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.helpers.DateTimeDateFormat;
@@ -62,8 +64,9 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
 			String query = "select top " + numRegistros.getValor()
-					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos_v "
-					+ "where FechaIncidente between '" + sdf.format(inicio) + "' and '" + sdf.format(fin) + "'";
+					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
+					+ "where FechaIncidente >= '" + sdf.format(inicio) + "' and FechaIncidente < '" + sdf.format(fin)
+					+ "'";
 			LOG.info(query);
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar("Númeroincidente", new StringType())
 					.addScalar("LLAMANTE_Teléfono", new StringType()).addScalar("Duration", new LongType())
@@ -77,7 +80,10 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 				if (object != null) {
 					LlamadaDTO llamadaDTO = new LlamadaDTO();
 					llamadaDTO.setIncidentNumber((String) object[0]);
-					llamadaDTO.setNumeroTelefonoIncidente(((String) object[1]).replaceAll("\\s", ""));
+					String numero = (String) object[1];
+					Pattern p = Pattern.compile("[\\s]");
+					Matcher m = p.matcher(numero);
+					llamadaDTO.setNumeroTelefonoIncidente(m.replaceAll(""));
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
 					llamadaDTO.setFechaRegistro((object[3] != null ? (Date) object[3] : null));
 					lista.add(llamadaDTO);

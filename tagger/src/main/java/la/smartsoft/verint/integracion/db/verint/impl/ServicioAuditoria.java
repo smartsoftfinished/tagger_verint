@@ -117,6 +117,7 @@ public class ServicioAuditoria implements IVerintDB {
 				fields++;
 			}
 			query += " WHERE INCIDENT_NUMBER = '" + audit.getIncidentNumber() + "'";
+			LOG.info(query);
 
 			stmt = conn.createStatement();
 			stmt.executeUpdate(query);
