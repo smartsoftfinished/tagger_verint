@@ -304,6 +304,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				LOG.info("Termina Correctamente Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
 			} catch (Exception e) {
 				LOG.error("Error En Servicio Tagging " + sesion);
+				servicioAuditoria.actualizarAuditoria(new AuditoriaTaggingDTO(null, sesion.getCd2(), null,
+						"ERROR TAGGER", e.getMessage(), null, null));
 				LOG.error(e.getMessage());
 				LOG.error(e);
 				e.printStackTrace();

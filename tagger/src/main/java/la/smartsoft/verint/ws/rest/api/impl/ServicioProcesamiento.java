@@ -141,14 +141,12 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 
 			// 3. Se hace el Tagging
 			// 3.1 Asignar Incidente en Datos Sesion
-			// taguearSession(llamada, sesiones);
+			taguearSession(llamada, sesiones);
 
 			// 3.2 Actualizar Sesion con el nuevo Dato
-			// LOG.info("Antes Actualizacion Verint: " +
-			// llamada.getNumeroTelefonoIncidente());
-			// resultado = actualizacionVerintService.actualizarVerint(sesiones);
-			// LOG.info("Fin Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente()
-			// + " " + resultado);
+			LOG.info("Antes Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente());
+			resultado = actualizacionVerintService.actualizarVerint(sesiones);
+			LOG.info("Fin Actualizacion Verint: " + llamada.getNumeroTelefonoIncidente() + " " + resultado);
 
 			LOG.info("Termina Procesamiento: " + llamada.toString());
 		}
