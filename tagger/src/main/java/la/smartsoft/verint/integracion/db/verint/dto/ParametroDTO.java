@@ -9,6 +9,11 @@ public class ParametroDTO {
 	public static int RANGO_CONSULTA = 2;
 	public static int SEGUNDOS_CONSULTA = 3;
 	public static int REGISTROS_MAXIMOS = 5;
+	public static int TABLA_RDW = 6;
+	public static int COL_NUM_INCIDENTE = 7;
+	public static int COL_TELEFONO = 8;
+	public static int COL_FECHA_INICIO = 9;
+	public static int COL_FECHA_FIN = 10;
 
 	private static int count = 0;
 	private int idParametro;

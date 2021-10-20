@@ -25,7 +25,7 @@ public class ServicioHorario implements IVerintHorario {
     public HorarioDTO consultarHorario(Date hora) {
 
         Connection conn = null;
-        HorarioDTO horarioDTO = new HorarioDTO();
+        HorarioDTO horarioDTO = null;
 
         try {
             LOG.info("Se intenta obtener conexion a base PostgreSQL");
@@ -46,6 +46,7 @@ public class ServicioHorario implements IVerintHorario {
 
                 System.out.print("no hay datos!: ");
             } else {
+                horarioDTO = new HorarioDTO();
                 horarioDTO.setIdHorario(rs.getLong("ID_HORARIO"));
                 horarioDTO.setHora(rs.getObject("HORA", LocalTime.class));
                 horarioDTO.setInicio(rs.getObject("INICIO", LocalTime.class));

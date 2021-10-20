@@ -21,13 +21,13 @@ public class ServicioParametro implements IVerintParametro {
 	private static final Logger LOG = Logger.getLogger(ServicioRDW.class);
 
 	List<ParametroDTO> parametro = new ArrayList<ParametroDTO>();
-	ParametroDTO parametroDTO = new ParametroDTO();
 
 	@SuppressWarnings("static-access")
 	@Override
 	public ParametroDTO consultarParametro(int idParametro) {
 
 		Connection conn = null;
+		ParametroDTO parametroDTO = new ParametroDTO();
 
 		try {
 			LOG.info("Se intenta obtener conexion a base PostgreSQL");
@@ -37,7 +37,7 @@ public class ServicioParametro implements IVerintParametro {
 
 			PreparedStatement smt = conn.prepareStatement(
 					"SELECT ID_PARAMETRO,NOMBRE,DESCRIPCION,VALOR,ESTADO,FECHA_CREACION,TIPO_PARAMETRO,CLASE_PARAMETRO FROM PARAMETRO_TAGGING WHERE ID_PARAMETRO= '"
-							+ idParametro + "' ");
+							+ idParametro + "'");
 
 			System.out.print("Se consulto Exitosamente:  ");
 
@@ -47,7 +47,6 @@ public class ServicioParametro implements IVerintParametro {
 
 				System.out.print("no hay datos!: ");
 			} else {
-
 				parametroDTO.setIdParametro(rs.getInt("ID_PARAMETRO"));
 				parametroDTO.setNombre(rs.getString("NOMBRE"));
 				parametroDTO.setDescripcion(rs.getString("DESCRIPCION"));
@@ -56,6 +55,7 @@ public class ServicioParametro implements IVerintParametro {
 				parametroDTO.setFechaCreacion(rs.getDate("FECHA_CREACION"));
 				parametroDTO.setTipoParametro(rs.getString("TIPO_PARAMETRO"));
 				parametroDTO.setClaseParametro(rs.getString("CLASE_PARAMETRO"));
+				System.out.println("El parametro es: " + parametroDTO.getValor());
 				parametro.add(parametroDTO);
 
 			}

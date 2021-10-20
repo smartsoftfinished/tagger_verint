@@ -50,15 +50,9 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				return true;
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 
-			// TODO: si se obtienen varias sesiones solo se actualiza la mas reciente
 			SessionVerint sesion = sesiones.get(0);
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss.SS");
-			for (SessionVerint session : sesiones) {
-				Date d1 = format.parse(sesion.getAUDIO_START_TIME());
-				Date d2 = format.parse(session.getAUDIO_START_TIME());
-				if (d2.after(d1))
-					sesion = session;
-			}
+			SimpleDateFormat origen = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS");
+			SimpleDateFormat objetivo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS00000XXX");
 
 			LOG.info("Inicia Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
 			LOG.info("Datos: " + sesion.toString());
@@ -249,7 +243,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				sb.append("<Extension name=\"AudioAcquisition\">");
 				if (sesion.getAudio_end_time() != null && !"".equals(sesion.getAudio_end_time())
 						&& !"null".equals(sesion.getAudio_end_time())) {
-					sb.append("		<End>").append(sesion.getAudio_end_time()).append(APPEND_TIME).append("</End>"); // <!--audio_end_time-->
+					Date h = origen.parse(sesion.getAudio_end_time());
+					sb.append("		<End>").append(objetivo.format(h)).append("</End>"); // <!--audio_end_time-->
 				}
 				// sb.append("
 				// <End>").append("2021-09-01T12:41:01.56").append(APPEND_TIME).append("</End>");
@@ -260,8 +255,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				}
 				if (sesion.getAUDIO_START_TIME() != null && !"".equals(sesion.getAUDIO_START_TIME())
 						&& !"null".equals(sesion.getAUDIO_START_TIME())) {
-					sb.append("		<Start>").append(sesion.getAUDIO_START_TIME()).append(APPEND_TIME)
-							.append("</Start>"); // <!--audio_start_time-->
+					Date h = origen.parse(sesion.getAUDIO_START_TIME());
+					sb.append("		<Start>").append(objetivo.format(h)).append("</Start>"); // <!--audio_start_time-->
 				}
 				if (sesion.getWrapup_time_in_seconds() != null && !"".equals(sesion.getWrapup_time_in_seconds())
 						&& !"null".equals(sesion.getWrapup_time_in_seconds())) {

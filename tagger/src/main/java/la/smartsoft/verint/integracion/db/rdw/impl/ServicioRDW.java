@@ -60,17 +60,33 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			LOG.info("Se intenta consumir el parametro registros maximos");
 			ParametroDTO numRegistros = servicioParametro.consultarParametro(ParametroDTO.REGISTROS_MAXIMOS);
 			LOG.info("Se consume el parametro registros maximos");
+			LOG.info("Se intenta consumir el parametro nombre de tabla");
+			ParametroDTO tabla = servicioParametro.consultarParametro(ParametroDTO.TABLA_RDW);
+			LOG.info("Se consume el parametro nombre de tabla");
+			LOG.info("Se intenta consumir el parametro nombre columna numero incidente");
+			ParametroDTO numIncidente = servicioParametro.consultarParametro(ParametroDTO.COL_NUM_INCIDENTE);
+			LOG.info("Se consume el parametro nombre columna numero incidente");
+			LOG.info("Se intenta consumir el parametro nombre columna telefono");
+			ParametroDTO telefono = servicioParametro.consultarParametro(ParametroDTO.COL_TELEFONO);
+			LOG.info("Se consume el parametro nombre columna telefono");
+			LOG.info("Se intenta consumir el parametro nombre columna fecha incidente");
+			ParametroDTO fechaInicio = servicioParametro.consultarParametro(ParametroDTO.COL_FECHA_INICIO);
+			LOG.info("Se consume el parametro nombre columna fecha incidente");
+			LOG.info("Se intenta consumir el parametro nombre columna fecha fin");
+			ParametroDTO fechaFin = servicioParametro.consultarParametro(ParametroDTO.COL_FECHA_FIN);
+			LOG.info("Se consume el parametro nombre columna fecha fin");
 			// Implementar consulta SQLServer
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
-			String query = "select top " + numRegistros.getValor()
-					+ " Númeroincidente, LLAMANTE_Teléfono, DATEDIFF(second, FechaIncidente, FechayHoraCierre ) as Duration, FechaIncidente from dbo.Datos_basicos "
-					+ "where FechaIncidente >= '" + sdf.format(inicio) + "' and FechaIncidente < '" + sdf.format(fin)
-					+ "'";
+			String query = "select top " + numRegistros.getValor() + " " + numIncidente.getValor() + ", "
+					+ telefono.getValor() + ", DATEDIFF(second, " + fechaInicio.getValor() + ", " + fechaFin.getValor()
+					+ " ) as Duration, " + fechaInicio.getValor() + " from " + tabla.getValor() + " " + "where "
+					+ fechaInicio.getValor() + " >= '" + sdf.format(inicio) + "' and " + fechaInicio.getValor() + " < '"
+					+ sdf.format(fin) + "'";
 			LOG.info(query);
-			List<Object[]> queryRta = session.createSQLQuery(query).addScalar("Númeroincidente", new StringType())
-					.addScalar("LLAMANTE_Teléfono", new StringType()).addScalar("Duration", new LongType())
-					.addScalar("FechaIncidente", new TimestampType()).list();
+			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
+					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
+					.addScalar(fechaInicio.getValor(), new TimestampType()).list();
 			session.close();
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 
