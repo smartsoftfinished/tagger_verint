@@ -15,6 +15,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import co.com.verint.audiomedia.ws.client.ArrayOfMediaDescription;
 import co.com.verint.audiomedia.ws.client.ArrayOfSessionDetails;
@@ -45,13 +46,13 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 
 	// CONSTANTES PARA EL SERVICIO
 	private static final Logger LOG = Logger.getLogger(ServicioConsultaAudioMedia.class);
-	
+
 	@Override
 	public List<String> consultarAudio(Integer siteId, Integer sessionId) {
-		
+
 		LOG.info("Inicio consultarAudio");
 		List<String> audios = new ArrayList<String>();
- 
+
 		try {
 			IToken tokenService = new ServicioToken();
 			UsuarioToken usuarioToken = new UsuarioToken();
@@ -59,49 +60,51 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 			usuarioToken.setPassword(TOKEN_CONTRASENIA);
 			TOKEN = tokenService.validarUsuario(usuarioToken);
 
-			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(ENDPOINT_VERINT_SOAP_AUDIO, 60000, TOKEN.getToken());
-			LOG.info("siteId: " + siteId );
-			LOG.info("sessionId: " + sessionId );
-			
+			MediaUtilizationAPIWebServiceSoap serviceVerint = getAudioMediaPort(ENDPOINT_VERINT_SOAP_AUDIO, 60000,
+					TOKEN.getToken());
+			LOG.info("siteId: " + siteId);
+			LOG.info("sessionId: " + sessionId);
+
 			if (siteId == null || sessionId == null) {
 				return audios;
-			}	
-			
-			
-			
+			}
+
 			ObjectFactory objectFactory = new ObjectFactory();
-			
-			//Se crea el detail
+
+			// Se crea el detail
 			ArrayOfSessionDetails details = objectFactory.createArrayOfSessionDetails();
 			SessionDetails sesionDetail = objectFactory.createSessionDetails();
 			sesionDetail.setSiteId(siteId);
 			sesionDetail.setSessionId(sessionId);
 			details.getSessionDetails().add(sesionDetail);
-			
-			//Se crea el mediadescriptor
+
+			// Se crea el mediadescriptor
 			ArrayOfMediaDescription mediaDescriptions = objectFactory.createArrayOfMediaDescription();
 			MediaDescription media = objectFactory.createAudioMediaDescription();
 			media.setFormat("portable");
 			media.setDecrypt(true);
 			mediaDescriptions.getMediaDescription().add(media);
-			
-			//Se crea los modifiers
+
+			// Se crea los modifiers
 			MediaModifiers modifiers = objectFactory.createMediaModifiers();
-			
+
 			ArrayOfString arrayPlayBack = objectFactory.createArrayOfString();
 			arrayPlayBack.getString().add(sessionId.toString());
 			modifiers.setPlaybackSiteIds(arrayPlayBack);
-			
-			ArrayOfSessionMedia sessionMedia = serviceVerint.getMediaFilesWithSessionDetails(details, mediaDescriptions, modifiers);
-			LOG.info("SESION MEDIA : " + (sessionMedia !=null && sessionMedia.getSessionMedia() !=null ? sessionMedia.getSessionMedia().size()+"" : "Vacia" ) );
-			for(SessionMedia sesionMedia: sessionMedia.getSessionMedia()) {
-				if(sesionMedia.getMediaItems() !=null && sesionMedia.getMediaItems().getMediaItem() !=null) {
-					for(MediaItem item : sesionMedia.getMediaItems().getMediaItem()) {
+
+			ArrayOfSessionMedia sessionMedia = serviceVerint.getMediaFilesWithSessionDetails(details, mediaDescriptions,
+					modifiers);
+			LOG.info("SESION MEDIA : " + (sessionMedia != null && sessionMedia.getSessionMedia() != null
+					? sessionMedia.getSessionMedia().size() + ""
+					: "Vacia"));
+			for (SessionMedia sesionMedia : sessionMedia.getSessionMedia()) {
+				if (sesionMedia.getMediaItems() != null && sesionMedia.getMediaItems().getMediaItem() != null) {
+					for (MediaItem item : sesionMedia.getMediaItems().getMediaItem()) {
 						audios.add(item.getHttpPath());
-					}	
+					}
 				}
-			} 
-			
+			}
+
 			LOG.info("Termina Correctamente consultarAudio: siteId: " + siteId + ", sessionId : " + sessionId);
 
 		} catch (Exception e) {
@@ -112,24 +115,25 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 			throw new RuntimeException("Error consultando audios : " + e.getMessage());
 		}
 
-		
 		LOG.info("Fin consultarAudio");
 		return audios;
 	}
 
 	/**
-	 * Retorna una instancia del Servicio de AudioMedia MediaUtilizationAPIWebServiceSoap
+	 * Retorna una instancia del Servicio de AudioMedia
+	 * MediaUtilizationAPIWebServiceSoap
 	 * 
 	 * @param endPoint
 	 * @param timeoutRequest
 	 * @return
 	 * @throws Exception
 	 */
-	public MediaUtilizationAPIWebServiceSoap getAudioMediaPort(String endPoint, Integer timeoutRequest, String token) throws Exception {
+	public MediaUtilizationAPIWebServiceSoap getAudioMediaPort(String endPoint, Integer timeoutRequest, String token)
+			throws Exception {
 
 		try {
-			MediaUtilizationAPIWebServiceSoap gatewayPort = (MediaUtilizationAPIWebServiceSoap) ServiceLocator.getService(WEB_SERVICE_AUDIO_MEDIA);
-			
+			MediaUtilizationAPIWebServiceSoap gatewayPort = (MediaUtilizationAPIWebServiceSoap) ServiceLocator
+					.getService(WEB_SERVICE_AUDIO_MEDIA);
 
 			// Si no se tiene el servicio en el cache, se instancia y se agrega
 			if (gatewayPort == null) {
@@ -144,7 +148,7 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 					LOG.info("Conectado a: "
 							+ bindingProvider.getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
 				}
-				
+
 				// Se define el timeout
 				definirTimeout(bindingProvider, timeoutRequest, timeoutRequest);
 
@@ -161,20 +165,20 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 				}
 				// Se define el timeout
 				definirTimeout(bindingProvider, timeoutRequest, timeoutRequest);
-				
-				//Map<String, Object> headers = new HashMap<String, Object>();
-		        //headers.put("Impact360AuthToken", token);
-		        
-				//Se crea un header con el token en Impact360AuthToken
-		        Map<String, List<String>> headers = new HashMap<String, List<String>>();
-		        headers.put("Impact360AuthToken", Collections.singletonList(token));
+
+				// Map<String, Object> headers = new HashMap<String, Object>();
+				// headers.put("Impact360AuthToken", token);
+
+				// Se crea un header con el token en Impact360AuthToken
+				Map<String, List<String>> headers = new HashMap<String, List<String>>();
+				headers.put("Impact360AuthToken", Collections.singletonList(token));
 
 				LOG.info("Antes de poner Token");
-				//Se setea el token
+				// Se setea el token
 				bindingProvider.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 				LOG.info("Despues de poner Token");
-				
-			}	        
+
+			}
 
 			return gatewayPort;
 		} catch (Exception e) {
@@ -216,7 +220,5 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 			e.printStackTrace();
 		}
 	}
-
-
 
 }

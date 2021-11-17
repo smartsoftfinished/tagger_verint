@@ -41,9 +41,7 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 	public boolean actualizarVerint(List<SessionVerint> sesiones) {
 
 		LOG.info("Inicio actualizarVerint");
-
 		try {
-
 			IDataModelWS serviceVerint = getDataModelWCFPort(ENDPOINT_VERINT_SOAP_TAGGING, 60000);
 			LOG.info("Cantidad Sesiones : " + (sesiones != null ? sesiones.size() : " VACIAS"));
 			if (sesiones == null || sesiones.size() == 0)
@@ -51,8 +49,9 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 
 			SessionVerint sesion = sesiones.get(0);
-			SimpleDateFormat origen = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS");
-			SimpleDateFormat objetivo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS00000XXX");
+			// SimpleDateFormat origen = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+			// SimpleDateFormat objetivo = new
+			// SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS0000XXX");
 
 			LOG.info("Inicia Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
 			LOG.info("Datos: " + sesion.toString());
@@ -243,8 +242,9 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				sb.append("<Extension name=\"AudioAcquisition\">");
 				if (sesion.getAudio_end_time() != null && !"".equals(sesion.getAudio_end_time())
 						&& !"null".equals(sesion.getAudio_end_time())) {
-					Date h = origen.parse(sesion.getAudio_end_time());
-					sb.append("		<End>").append(objetivo.format(h)).append("</End>"); // <!--audio_end_time-->
+					String horaFin = sesion.getAudio_end_time() + (sesion.getAudio_end_time().length() == 22 ? "0" : "")
+							+ APPEND_TIME;
+					sb.append("		<End>").append(horaFin).append("</End>"); // <!--audio_end_time-->
 				}
 				// sb.append("
 				// <End>").append("2021-09-01T12:41:01.56").append(APPEND_TIME).append("</End>");
@@ -255,8 +255,9 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				}
 				if (sesion.getAUDIO_START_TIME() != null && !"".equals(sesion.getAUDIO_START_TIME())
 						&& !"null".equals(sesion.getAUDIO_START_TIME())) {
-					Date h = origen.parse(sesion.getAUDIO_START_TIME());
-					sb.append("		<Start>").append(objetivo.format(h)).append("</Start>"); // <!--audio_start_time-->
+					String hora = sesion.getAUDIO_START_TIME()
+							+ (sesion.getAUDIO_START_TIME().length() == 22 ? "0" : "") + APPEND_TIME;
+					sb.append("		<Start>").append(hora).append("</Start>"); // <!--audio_start_time-->
 				}
 				if (sesion.getWrapup_time_in_seconds() != null && !"".equals(sesion.getWrapup_time_in_seconds())
 						&& !"null".equals(sesion.getWrapup_time_in_seconds())) {
@@ -294,13 +295,13 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				ArrayOfstring array = objectFactory.createArrayOfstring();
 				array.getString().add(sb.toString());
 				serviceVerint.processEx(array, TransactionMode.NONE);
-				servicioAuditoria.actualizarAuditoria(
-						new AuditoriaTaggingDTO(null, sesion.getCd2(), null, "PROCESADO", null, null, null));
+				servicioAuditoria.actualizarAuditoria(new AuditoriaTaggingDTO(null, sesion.getCd2(), null, "PROCESADO",
+						null, null, null, null, null));
 				LOG.info("Termina Correctamente Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
 			} catch (Exception e) {
 				LOG.error("Error En Servicio Tagging " + sesion);
 				servicioAuditoria.actualizarAuditoria(new AuditoriaTaggingDTO(null, sesion.getCd2(), null,
-						"ERROR TAGGER", e.getMessage(), null, null));
+						"ERROR TAGGER", e.getMessage(), null, null, null, null));
 				LOG.error(e.getMessage());
 				LOG.error(e);
 				e.printStackTrace();

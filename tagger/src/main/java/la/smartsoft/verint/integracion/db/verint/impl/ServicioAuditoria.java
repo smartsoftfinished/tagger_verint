@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -13,6 +17,7 @@ import org.apache.log4j.Logger;
 import la.smartsoft.verint.integracion.db.verint.IVerintDB;
 import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
 import la.smartsoft.verint.integracion.db.verint.dto.Conexion;
+import la.smartsoft.verint.integracion.db.verint.dto.ParametroDTO;
 
 //clase servicio registrar una auditoria
 public class ServicioAuditoria implements IVerintDB {
@@ -35,12 +40,16 @@ public class ServicioAuditoria implements IVerintDB {
 			conn = new Conexion().crearConexion();
 			conn.setAutoCommit(false);
 
+			String query = "INSERT INTO  AUDITORIA_TAGGING(FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID, FECHA_INCIDENTE, INTENTOS_TAGGING) VALUES ('"
+					+ audit.getFechaRegistro() + "', '" + audit.getIncidentNumber() + "', '" + audit.getNumeroTelefono()
+					+ "', '" + audit.getEstado() + "', '" + audit.getMensajeError() + "', " + audit.getSessionId()
+					+ ", " + audit.getSiteId() + ", '" + audit.getFechaIncidente() + "', " + audit.getIntentosTagging()
+					+ ")";
+
+			LOG.info(query);
+
 			stmt = conn.createStatement();
-			stmt.executeUpdate(
-					"INSERT INTO  AUDITORIA_TAGGING(FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID) VALUES ('"
-							+ audit.getFechaRegistro() + "', '" + audit.getIncidentNumber() + "', '"
-							+ audit.getNumeroTelefono() + "', '" + audit.getEstado() + "', '" + audit.getMensajeError()
-							+ "', " + audit.getSessionId() + ", " + audit.getSiteId() + ")");
+			stmt.executeUpdate(query);
 
 			System.out.print("Se ha registrado Exitosamente: ");
 
@@ -57,13 +66,15 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
 				auditor.setSessionId(rs.getLong("SESSION_ID"));
 				auditor.setSiteId(rs.getLong("SITE_ID"));
+				auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
+				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
 				auditoria.add(auditor);
 				System.out.println(auditor);
 				System.out.println("guardado ok: ");
 			}
 			conn.commit();
 		} catch (Exception e) {
-			LOG.error("Termina con ERROR actualizarAuditoria : " + audit.getIncidentNumber());
+			LOG.error("Termina con ERROR registrar : " + audit.getIncidentNumber());
 			LOG.error(e.getMessage());
 			LOG.error(e);
 			e.printStackTrace();
@@ -116,6 +127,10 @@ public class ServicioAuditoria implements IVerintDB {
 				query += (fields > 0 ? ", " : " ") + "SITE_ID = " + audit.getSiteId();
 				fields++;
 			}
+			if (audit.getIntentosTagging() != null) {
+				query += (fields > 0 ? ", " : " ") + "INTENTOS_TAGGING = " + audit.getIntentosTagging();
+				fields++;
+			}
 			query += " WHERE INCIDENT_NUMBER = '" + audit.getIncidentNumber() + "'";
 			LOG.info(query);
 
@@ -137,6 +152,8 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
 				auditor.setSessionId(rs.getLong("SESSION_ID"));
 				auditor.setSiteId(rs.getLong("SITE_ID"));
+				auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
+				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
 				auditoria.add(auditor);
 				System.out.println(auditor);
 				System.out.println("actualizacion ok: ");
@@ -239,6 +256,102 @@ public class ServicioAuditoria implements IVerintDB {
 					conn.close();
 				} catch (Exception e2) {
 					LOG.error("Error cerrando Conexion : " + incidentNumber);
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}
+			}
+		}
+		return respuesta;
+	}
+
+	@Override
+	public List<AuditoriaTaggingDTO> consultarPendientes() {
+
+		// Respuesta
+		List<AuditoriaTaggingDTO> respuesta = new ArrayList<>();
+
+		// Coxiones, Statemente y ResultSet
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			LOG.info("Inicia consulta pendientes");
+
+			// Se abre conexión
+			conn = new Conexion().crearConexion();
+			conn.setAutoCommit(false);
+			ServicioParametro servicioParametro = new ServicioParametro();
+
+			LOG.info("Se intenta consumir el parametro intentos maximos tagging");
+			ParametroDTO maxIntentosPar = servicioParametro.consultarParametro(ParametroDTO.MAX_INTENTOS_TAGGING);
+			LOG.info("Se consume el parametro intentos maximos tagging");
+			int maxIntentos = Integer.parseInt(maxIntentosPar.getValor());
+
+			// Query
+			String query = "SELECT ID_AUDITORIA, FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID, FECHA_INCIDENTE, INTENTOS_TAGGING FROM AUDITORIA_TAGGING WHERE ESTADO != 'PROCESADO' AND INTENTOS_TAGGING <= "
+					+ maxIntentos;
+			LOG.info(query);
+			// Se crea Prepared Statement
+			stmt = conn.prepareStatement(query);
+
+			// Se ejecuta Query
+			rs = stmt.executeQuery();
+
+			if (rs.wasNull()) {
+				LOG.info("NO se encuentran registros pendientes");
+			}
+
+			while (rs.next()) {
+				AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
+				auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
+				auditor.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
+				auditor.setIncidentNumber(rs.getString("INCIDENT_NUMBER"));
+				auditor.setNumeroTelefono(rs.getString("NUMERO_TELEFONO"));
+				auditor.setEstado(rs.getString("ESTADO"));
+				auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
+				auditor.setSessionId(rs.getLong("SESSION_ID"));
+				auditor.setSiteId(rs.getLong("SITE_ID"));
+				Timestamp instant = rs.getTimestamp("FECHA_INCIDENTE");
+				LOG.info(instant);
+				auditor.setFechaIncidente(instant);
+				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
+				respuesta.add(auditor);
+				LOG.info("Se obtuvo el registro");
+				LOG.info(auditor);
+			}
+
+			LOG.info("Termina obtencion de pendientes");
+
+		} catch (Exception e) {
+			LOG.error("Termina con ERROR obtencion de pendientes");
+			LOG.error(e.getMessage());
+			LOG.error(e);
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando ResulSet obtencion de pendientes");
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Statement  obtencion de pendientes");
+					LOG.error(e2.getMessage());
+					LOG.error(e2);
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					LOG.error("Error cerrando Conexion obtencion de pendientes");
 					LOG.error(e2.getMessage());
 					LOG.error(e2);
 				}

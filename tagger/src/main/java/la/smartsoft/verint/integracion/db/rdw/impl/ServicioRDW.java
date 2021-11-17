@@ -82,7 +82,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					+ telefono.getValor() + ", DATEDIFF(second, " + fechaInicio.getValor() + ", " + fechaFin.getValor()
 					+ " ) as Duration, " + fechaInicio.getValor() + " from " + tabla.getValor() + " " + "where "
 					+ fechaInicio.getValor() + " >= '" + sdf.format(inicio) + "' and " + fechaInicio.getValor() + " < '"
-					+ sdf.format(fin) + "'";
+					+ sdf.format(fin) + "' order by " + fechaInicio.getValor() + " ASC";
 			LOG.info(query);
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
 					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
@@ -91,6 +91,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+			List<AuditoriaTaggingDTO> pendientes = servicioAuditoria.consultarPendientes();
 			List<LlamadaDTO> lista = new ArrayList<LlamadaDTO>();
 			for (Object[] object : queryRta) {
 				if (object != null) {
@@ -98,23 +99,33 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					llamadaDTO.setIncidentNumber((String) object[0]);
 					String numero = (String) object[1];
 					Pattern p = Pattern.compile("[\\s]");
-					Matcher m = p.matcher(numero);
+					Matcher m = p.matcher(numero != null ? numero : "");
 					llamadaDTO.setNumeroTelefonoIncidente(m.replaceAll(""));
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
 					llamadaDTO.setFechaRegistro((object[3] != null ? (Date) object[3] : null));
 					lista.add(llamadaDTO);
-					servicioAuditoria
-							.registrarAuditoria(new AuditoriaTaggingDTO(new Date(), llamadaDTO.getIncidentNumber(),
-									llamadaDTO.getNumeroTelefonoIncidente(), "SIN PROCESAR", null, null, null));
+					servicioAuditoria.registrarAuditoria(new AuditoriaTaggingDTO(new Date(),
+							llamadaDTO.getIncidentNumber(), llamadaDTO.getNumeroTelefonoIncidente(), "SIN PROCESAR",
+							null, null, null, llamadaDTO.getFechaRegistro(), 1l));
 				}
 			}
-
+			for (AuditoriaTaggingDTO auditoriaTaggingDTO : pendientes) {
+				LlamadaDTO llamadaDTO = new LlamadaDTO();
+				llamadaDTO.setIncidentNumber(auditoriaTaggingDTO.getIncidentNumber());
+				llamadaDTO.setNumeroTelefonoIncidente(auditoriaTaggingDTO.getNumeroTelefono());
+				llamadaDTO.setDuracion(0l);
+				llamadaDTO.setFechaRegistro(auditoriaTaggingDTO.getFechaIncidente());
+				lista.add(llamadaDTO);
+				servicioAuditoria
+						.actualizarAuditoria(new AuditoriaTaggingDTO(null, auditoriaTaggingDTO.getIncidentNumber(),
+								null, null, null, null, null, null, auditoriaTaggingDTO.getIntentosTagging() + 1));
+			}
 			LOG.info("Fin obtenerLlamadas");
 			LOG.info("Cantidad Registros: " + (lista != null ? lista.size() : "VACIO"));
 
 			return lista;
 		} catch (Exception e) {
-			LOG.error(e);
+			LOG.error(e, e);
 			e.printStackTrace();
 		}
 

@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import la.smartsoft.verint.integracion.db.rdw.impl.ServicioRDW;
 import la.smartsoft.verint.integracion.db.verint.IVerintParametro;
 
 import la.smartsoft.verint.integracion.db.verint.dto.Conexion;
@@ -18,7 +17,7 @@ import la.smartsoft.verint.integracion.db.verint.dto.ParametroDTO;
 
 public class ServicioParametro implements IVerintParametro {
 	@SuppressWarnings("unused")
-	private static final Logger LOG = Logger.getLogger(ServicioRDW.class);
+	private static final Logger LOG = Logger.getLogger(ServicioParametro.class);
 
 	List<ParametroDTO> parametro = new ArrayList<ParametroDTO>();
 

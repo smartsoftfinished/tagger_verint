@@ -8,12 +8,14 @@ public class ParametroDTO {
 	public static int SEGUNDOS_ATRAS = 1;
 	public static int RANGO_CONSULTA = 2;
 	public static int SEGUNDOS_CONSULTA = 3;
+	public static int SEGUNDOS_DESP_CONSULTA = 4;
 	public static int REGISTROS_MAXIMOS = 5;
 	public static int TABLA_RDW = 6;
 	public static int COL_NUM_INCIDENTE = 7;
 	public static int COL_TELEFONO = 8;
 	public static int COL_FECHA_INICIO = 9;
 	public static int COL_FECHA_FIN = 10;
+	public static int MAX_INTENTOS_TAGGING = 11;
 
 	private static int count = 0;
 	private int idParametro;

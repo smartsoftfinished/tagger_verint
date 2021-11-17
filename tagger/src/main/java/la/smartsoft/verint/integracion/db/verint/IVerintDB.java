@@ -1,5 +1,6 @@
 package la.smartsoft.verint.integracion.db.verint;
 
+import java.util.List;
 import java.util.Map;
 
 import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
@@ -18,5 +19,7 @@ public interface IVerintDB {
 	 * @return
 	 */
 	public Map<String, Object> consultarInformacionAudio(String incidentNumber);
+
+	public List<AuditoriaTaggingDTO> consultarPendientes();
 
 }

@@ -15,6 +15,8 @@ public class AuditoriaTaggingDTO {
 	private String mensajeError;
 	private Long sessionId;
 	private Long siteId;
+	private Date fechaIncidente;
+	private Long intentosTagging;
 
 	public AuditoriaTaggingDTO() {
 		super();
@@ -22,16 +24,32 @@ public class AuditoriaTaggingDTO {
 	}
 
 	public AuditoriaTaggingDTO(Date fechaRegistro, String incidentNumber, String numeroTelefono, String estado,
-			String mensajeError, Long idSesion, Long idSite) {
-
-		setIdAuditoria(++count);
+			String mensajeError, Long sessionId, Long siteId, Date fechaIncidente, Long intentosTagging) {
 		this.fechaRegistro = fechaRegistro;
 		this.incidentNumber = incidentNumber;
 		this.numeroTelefono = numeroTelefono;
 		this.estado = estado;
 		this.mensajeError = mensajeError;
-		this.sessionId = idSesion;
-		this.siteId = idSite;
+		this.sessionId = sessionId;
+		this.siteId = siteId;
+		this.fechaIncidente = fechaIncidente;
+		this.intentosTagging = intentosTagging;
+	}
+
+	public Date getFechaIncidente() {
+		return this.fechaIncidente;
+	}
+
+	public void setFechaIncidente(Date fechaIncidente) {
+		this.fechaIncidente = fechaIncidente;
+	}
+
+	public Long getIntentosTagging() {
+		return this.intentosTagging;
+	}
+
+	public void setIntentosTagging(Long intentosTagging) {
+		this.intentosTagging = intentosTagging;
 	}
 
 	public Long getSessionId() {

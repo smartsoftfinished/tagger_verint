@@ -127,7 +127,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 							}
 							servicioAuditoria.actualizarAuditoria(
 									new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "CONSULTADO", null,
-											sessionVerint.getSid(), sessionVerint.getSite_id()));
+											sessionVerint.getSid(), sessionVerint.getSite_id(), null, null));
 							return Arrays.asList(sessionVerint);
 						}
 						return sesiones;
@@ -382,7 +382,13 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			ParametroDTO segundosConsulta = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_CONSULTA);
 			LOG.info("Se consume el parametro segundos consulta");
 
+			LOG.info("Se intenta consumir el parametro segundos despues consulta");
+			ParametroDTO segundosDespuesConsulta = servicioParametro
+					.consultarParametro(ParametroDTO.SEGUNDOS_DESP_CONSULTA);
+			LOG.info("Se consume el parametro segundos despues consulta");
+
 			calIni.add(Calendar.SECOND, -Integer.parseInt(segundosConsulta.getValor()));
+			calFin.add(Calendar.SECOND, Integer.parseInt(segundosDespuesConsulta.getValor()));
 			// calFin.add(Calendar.SECOND,
 			// CANTIDAD_SEGUNDOS_QUERY_DESPUES + (llamada.getDuracion() != null ?
 			// llamada.getDuracion().intValue()
@@ -400,7 +406,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 					+ rellenarCeros(calendarXMLFin.getMinute()) + ":" + rellenarCeros(calendarXMLFin.getSecond()));
 
 			period.setType(PERIOD_TYPE);
-			period.setDays("1");// TODO Validar
+			period.setDays("2");// TODO Validar
 
 			// "BeginPeriod"
 			// :

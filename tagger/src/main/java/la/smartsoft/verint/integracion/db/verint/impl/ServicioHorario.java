@@ -10,7 +10,6 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import la.smartsoft.verint.integracion.db.rdw.impl.ServicioRDW;
 import la.smartsoft.verint.integracion.db.verint.IVerintHorario;
 import la.smartsoft.verint.integracion.db.verint.dto.Conexion;
 import la.smartsoft.verint.integracion.db.verint.dto.HorarioDTO;
@@ -18,7 +17,7 @@ import la.smartsoft.verint.integracion.db.verint.dto.HorarioDTO;
 public class ServicioHorario implements IVerintHorario {
 
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(ServicioRDW.class);
+    private static final Logger LOG = Logger.getLogger(ServicioHorario.class);
 
     @SuppressWarnings("static-access")
     @Override
