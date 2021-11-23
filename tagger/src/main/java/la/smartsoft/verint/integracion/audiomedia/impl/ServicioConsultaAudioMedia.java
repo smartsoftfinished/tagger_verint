@@ -15,7 +15,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import co.com.verint.audiomedia.ws.client.ArrayOfMediaDescription;
 import co.com.verint.audiomedia.ws.client.ArrayOfSessionDetails;
@@ -48,10 +47,10 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 	private static final Logger LOG = Logger.getLogger(ServicioConsultaAudioMedia.class);
 
 	@Override
-	public List<String> consultarAudio(Integer siteId, Integer sessionId) {
+	public List<Map<String, String>> consultarAudio(Integer siteId, Integer sessionId) {
 
 		LOG.info("Inicio consultarAudio");
-		List<String> audios = new ArrayList<String>();
+		List<Map<String, String>> audios = new ArrayList<>();
 
 		try {
 			IToken tokenService = new ServicioToken();
@@ -100,7 +99,11 @@ public class ServicioConsultaAudioMedia extends ConfiguracionApi implements ICon
 			for (SessionMedia sesionMedia : sessionMedia.getSessionMedia()) {
 				if (sesionMedia.getMediaItems() != null && sesionMedia.getMediaItems().getMediaItem() != null) {
 					for (MediaItem item : sesionMedia.getMediaItems().getMediaItem()) {
-						audios.add(item.getHttpPath());
+						Map<String, String> call = new HashMap<>();
+						call.put("url", item.getHttpPath());
+						call.put("sessionId", sessionId.toString());
+						call.put("fechaGrabacion", item.getStartTime().toXMLFormat());
+						audios.add(call);
 					}
 				}
 			}

@@ -16,6 +16,7 @@ public class ParametroDTO {
 	public static int COL_FECHA_INICIO = 9;
 	public static int COL_FECHA_FIN = 10;
 	public static int MAX_INTENTOS_TAGGING = 11;
+	public static int DIAS_VERINT = 12;
 
 	private static int count = 0;
 	private int idParametro;

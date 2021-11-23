@@ -1,7 +1,6 @@
 package la.smartsoft.verint.ws.rest.api;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import la.smartsoft.verint.integracion.audiomedia.impl.ServicioConsultaAudioMedi
 import la.smartsoft.verint.integracion.db.verint.IVerintDB;
 import la.smartsoft.verint.integracion.db.verint.impl.ServicioAuditoria;
 import la.smartsoft.verint.ws.rest.api.dto.ErrorWS;
-import la.smartsoft.verint.ws.rest.api.dto.ParametrosEntrada;
 import la.smartsoft.verint.ws.rest.api.dto.ParametrosSalida;
 import la.smartsoft.verint.ws.rest.api.dto.RespuestaAudio;
 import la.smartsoft.verint.ws.rest.api.impl.ServicioProcesamiento;
@@ -78,40 +76,42 @@ public class ProcesamientoTagging extends ConfiguracionApi {
 
 	@Path("/audio/{incidentNumber}")
 	@GET
-	//@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes("text/plain")
-	public RespuestaAudio consultarAudio(
-			@Context HttpServletRequest headers, @PathParam("incidentNumber") String incidentNumber
-			) {
-		
+	public RespuestaAudio consultarAudio(@Context HttpServletRequest headers,
+			@PathParam("incidentNumber") String incidentNumber) {
+
 		RespuestaAudio salida = new RespuestaAudio();
-		
+
 		try {
 			LOG.info("Inicio consultarAudio ");
-			
+
 			IVerintDB consultaBD = new ServicioAuditoria();
 			Map<String, Object> rta = consultaBD.consultarInformacionAudio(incidentNumber);
-			if(rta.get("siteId")!=null && rta.get("sessionId")!=null) {
-				
+			if (rta.get("siteId") != null && rta.get("sessionId") != null) {
+
 				IConsultarAudio audioService = new ServicioConsultaAudioMedia();
-				List<String> audios = audioService.consultarAudio(Integer.valueOf( (String) rta.get("siteId")), Integer.valueOf( (String) rta.get("sessionId")) );
-				//List<String> audios = audioService.consultarAudio(Integer.valueOf( "23778393"), Integer.valueOf( "427") );
-				
+				List<Map<String, String>> audios = audioService.consultarAudio(
+						Integer.valueOf((String) rta.get("siteId")), Integer.valueOf((String) rta.get("sessionId")));
+				// List<String> audios = audioService.consultarAudio(Integer.valueOf(
+				// "23778393"), Integer.valueOf( "427") );
+
 				salida.setAudios(audios);
 				salida.setExitoso(Boolean.TRUE);
-			}else {
+			} else {
 				salida.setExitoso(Boolean.FALSE);
 				ErrorWS error = new ErrorWS();
 				error.setCodigoError("ERR_TAGGER_002");
 				error.setDescripcionError("No se encontraron sesiones para el incidente");
 				salida.setError(error);
 			}
-			
-			LOG.info("Termino consultarAudio ");			
+
+			LOG.info("Termino consultarAudio ");
 			return salida;
-			
+
 		} catch (Exception e) {
+			LOG.error(e, e);
 			ErrorWS errorWS = new ErrorWS();
 			errorWS.setCodigoError("ERR_TAGGER_001");
 			errorWS.setDescripcionError("Error general : " + e.getMessage());
@@ -119,7 +119,7 @@ public class ProcesamientoTagging extends ConfiguracionApi {
 			salida.setExitoso(Boolean.FALSE);
 			return salida;
 		}
-		
+
 	}
 
 }

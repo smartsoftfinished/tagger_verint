@@ -82,7 +82,8 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					+ telefono.getValor() + ", DATEDIFF(second, " + fechaInicio.getValor() + ", " + fechaFin.getValor()
 					+ " ) as Duration, " + fechaInicio.getValor() + " from " + tabla.getValor() + " " + "where "
 					+ fechaInicio.getValor() + " >= '" + sdf.format(inicio) + "' and " + fechaInicio.getValor() + " < '"
-					+ sdf.format(fin) + "' order by " + fechaInicio.getValor() + " ASC";
+					+ sdf.format(fin) + "' and " + telefono.getValor() + " is not null order by "
+					+ fechaInicio.getValor() + " ASC";
 			LOG.info(query);
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
 					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
@@ -98,7 +99,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					LlamadaDTO llamadaDTO = new LlamadaDTO();
 					llamadaDTO.setIncidentNumber((String) object[0]);
 					String numero = (String) object[1];
-					Pattern p = Pattern.compile("[\\s]");
+					Pattern p = Pattern.compile("^00|[\\s]");
 					Matcher m = p.matcher(numero != null ? numero : "");
 					llamadaDTO.setNumeroTelefonoIncidente(m.replaceAll(""));
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
@@ -111,7 +112,10 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			}
 			for (AuditoriaTaggingDTO auditoriaTaggingDTO : pendientes) {
 				LlamadaDTO llamadaDTO = new LlamadaDTO();
-				llamadaDTO.setIncidentNumber(auditoriaTaggingDTO.getIncidentNumber());
+				Pattern p = Pattern.compile("^00|[\\s]");
+				Matcher m = p.matcher(
+						auditoriaTaggingDTO.getNumeroTelefono() != null ? auditoriaTaggingDTO.getNumeroTelefono() : "");
+				llamadaDTO.setIncidentNumber(m.replaceAll(""));
 				llamadaDTO.setNumeroTelefonoIncidente(auditoriaTaggingDTO.getNumeroTelefono());
 				llamadaDTO.setDuracion(0l);
 				llamadaDTO.setFechaRegistro(auditoriaTaggingDTO.getFechaIncidente());

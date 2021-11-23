@@ -118,12 +118,15 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 						ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 						if (sesiones != null && !sesiones.isEmpty()) {
+							long dif = Long.MAX_VALUE;
+							Date llamadaDate = llamada.getFechaRegistro();
 							sessionVerint = sesiones.get(0);
 							for (SessionVerint sv : sesiones) {
-								Date act = format.parse(sessionVerint.getAUDIO_START_TIME());
 								Date svf = format.parse(sv.getAUDIO_START_TIME());
-								if (svf.after(act))
+								if (Math.abs(svf.getTime() - llamadaDate.getTime()) < dif) {
 									sessionVerint = sv;
+									dif = Math.abs(svf.getTime() - llamadaDate.getTime());
+								}
 							}
 							servicioAuditoria.actualizarAuditoria(
 									new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "CONSULTADO", null,
@@ -400,13 +403,19 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			period.setBeginPeriod(calendarXMLIni.toString());
 			period.setEndPeriod(calendarXMLFin.toString());
 
-			period.setTimeOfDateBegin(rellenarCeros(calendarXMLIni.getHour()) + ":"
-					+ rellenarCeros(calendarXMLIni.getMinute()) + ":" + rellenarCeros(calendarXMLIni.getSecond()));
+			period.setTimeOfDateBegin(
+					(calendarXMLFin.getHour() != 0)
+							? (rellenarCeros(calendarXMLIni.getHour()) + ":" + rellenarCeros(calendarXMLIni.getMinute())
+									+ ":" + rellenarCeros(calendarXMLIni.getSecond()))
+							: null);
 			period.setTimeOfDateEnd(rellenarCeros(calendarXMLFin.getHour()) + ":"
 					+ rellenarCeros(calendarXMLFin.getMinute()) + ":" + rellenarCeros(calendarXMLFin.getSecond()));
 
 			period.setType(PERIOD_TYPE);
-			period.setDays("2");// TODO Validar
+			LOG.info("Se intenta consumir el parametro Dias Verint");
+			ParametroDTO diasVerint = servicioParametro.consultarParametro(ParametroDTO.DIAS_VERINT);
+			LOG.info("Se consume el parametro Dias Verint");
+			period.setDays(diasVerint.getValor());
 
 			// "BeginPeriod"
 			// :

@@ -242,8 +242,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				sb.append("<Extension name=\"AudioAcquisition\">");
 				if (sesion.getAudio_end_time() != null && !"".equals(sesion.getAudio_end_time())
 						&& !"null".equals(sesion.getAudio_end_time())) {
-					String horaFin = sesion.getAudio_end_time() + (sesion.getAudio_end_time().length() == 22 ? "0" : "")
-							+ APPEND_TIME;
+					String horaFin = sesion.getAudio_end_time() + (sesion.getAudio_end_time().length() == 21 ? "00"
+							: (sesion.getAudio_end_time().length() == 22 ? "0" : "")) + APPEND_TIME;
 					sb.append("		<End>").append(horaFin).append("</End>"); // <!--audio_end_time-->
 				}
 				// sb.append("
@@ -255,8 +255,8 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				}
 				if (sesion.getAUDIO_START_TIME() != null && !"".equals(sesion.getAUDIO_START_TIME())
 						&& !"null".equals(sesion.getAUDIO_START_TIME())) {
-					String hora = sesion.getAUDIO_START_TIME()
-							+ (sesion.getAUDIO_START_TIME().length() == 22 ? "0" : "") + APPEND_TIME;
+					String hora = sesion.getAUDIO_START_TIME() + (sesion.getAUDIO_START_TIME().length() == 21 ? "00"
+							: (sesion.getAUDIO_START_TIME().length() == 22 ? "0" : "")) + APPEND_TIME;
 					sb.append("		<Start>").append(hora).append("</Start>"); // <!--audio_start_time-->
 				}
 				if (sesion.getWrapup_time_in_seconds() != null && !"".equals(sesion.getWrapup_time_in_seconds())
