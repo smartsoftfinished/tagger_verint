@@ -26,13 +26,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import la.smartsoft.verint.integracion.daswebapi.IConsultaVerint;
 import la.smartsoft.verint.integracion.daswebapi.TokenInvalidoException;
 import la.smartsoft.verint.integracion.daswebapi.dto.Period;
 import la.smartsoft.verint.integracion.daswebapi.dto.RequestDynamicQuery;
-import la.smartsoft.verint.integracion.daswebapi.dto.ResponseDynamicQuery;
 import la.smartsoft.verint.integracion.daswebapi.dto.SessionVerint;
 import la.smartsoft.verint.integracion.db.rdw.dto.LlamadaDTO;
 import la.smartsoft.verint.integracion.db.verint.dto.AuditoriaTaggingDTO;
@@ -56,18 +53,17 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 	private static final String PBX_LOGIN_ID = "PBX_LOGIN_ID";
 	private static final String COMMAND_TIMEOUT_SECONDS = "30";
 	private static final String PERIOD_TYPE = "Relative";
-	private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO = -1800;
-	private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES = 1800;
+	// private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO = -1800;
+	// private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES = 1800;
 
 	// private static final Integer CANTIDAD_SEGUNDOS_QUERY_INICIO_DEFAULT = 86400;
-	private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES_DEFAULT = 86400;
+	// private static final Integer CANTIDAD_SEGUNDOS_QUERY_DESPUES_DEFAULT = 86400;
 
 	@Override
 	public List<SessionVerint> consultarVerint(LlamadaDTO llamada, Token token) throws TokenInvalidoException {
 
 		try {
 			LOG.info("Inicia consultarVerint");
-			LOG.info(llamada.toString());
 
 			if (llamada.getNumeroTelefonoIncidente() != null && llamada.getIncidentNumber() != null
 					&& llamada.getFechaRegistro() != null) {
@@ -80,7 +76,6 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 					// Construimos request a servicio REST.
 					Client clienteWeb = ClientBuilder.newClient();
 					WebTarget clientTarget = clienteWeb.target(ENDPOINT_VERINT_REST_QUERY);
-					LOG.info("Se va a consultar en:" + ENDPOINT_VERINT_REST_QUERY);
 
 					Invocation.Builder invocationBuilder = clientTarget.request(MediaType.APPLICATION_JSON)
 							.header(HttpHeaders.AUTHORIZATION, BEARER + token.getToken())
@@ -183,9 +178,9 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 							SessionVerint sesionRta = new SessionVerint();
 
 							// Mostramos los valores que trae el servicio
-							imprimirAtributos(session);
+							// imprimirAtributos(session);
 
-							LOG.info("audio_end_time : " + session.get("audio_end_time"));
+							// LOG.info("audio_end_time : " + session.get("audio_end_time"));
 
 							if (session.get("ani") != null) {
 								sesionRta.setAni((String) session.get("ani"));
@@ -298,8 +293,8 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 	public String obtenerFechaFin(String fechaInicio, int segundos) {
 
 		try {
-			LOG.info("Fecha Inicio : " + fechaInicio);
-			LOG.info("Segundos : " + segundos);
+			// LOG.info("Fecha Inicio : " + fechaInicio);
+			// LOG.info("Segundos : " + segundos);
 
 			// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",
 			// new Locale("es_CO"));
@@ -310,7 +305,6 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			calendar.setTime(date);
 			calendar.add(Calendar.SECOND, segundos);
 
-			LOG.info(format.format(calendar.getTime()));
 			return format.format(calendar.getTime());
 		} catch (Exception e) {
 			LOG.error("Error Obteniendo Fecha Final", e);
@@ -381,14 +375,12 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 
 			ServicioParametro servicioParametro = new ServicioParametro();
 
-			LOG.info("Se intenta consumir el parametro segundos consulta");
+			// "Se intenta consumir el parametro segundos consulta
 			ParametroDTO segundosConsulta = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_CONSULTA);
-			LOG.info("Se consume el parametro segundos consulta");
 
-			LOG.info("Se intenta consumir el parametro segundos despues consulta");
+			// Se intenta consumir el parametro segundos despues consulta
 			ParametroDTO segundosDespuesConsulta = servicioParametro
 					.consultarParametro(ParametroDTO.SEGUNDOS_DESP_CONSULTA);
-			LOG.info("Se consume el parametro segundos despues consulta");
 
 			calIni.add(Calendar.SECOND, -Integer.parseInt(segundosConsulta.getValor()));
 			calFin.add(Calendar.SECOND, Integer.parseInt(segundosDespuesConsulta.getValor()));
@@ -412,9 +404,9 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 					+ rellenarCeros(calendarXMLFin.getMinute()) + ":" + rellenarCeros(calendarXMLFin.getSecond()));
 
 			period.setType(PERIOD_TYPE);
-			LOG.info("Se intenta consumir el parametro Dias Verint");
+			// Se intenta consumir el parametro Dias Verint
 			ParametroDTO diasVerint = servicioParametro.consultarParametro(ParametroDTO.DIAS_VERINT);
-			LOG.info("Se consume el parametro Dias Verint");
+			// Se consume el parametro Dias Verint
 			period.setDays(diasVerint.getValor());
 
 			// "BeginPeriod"
@@ -432,7 +424,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			// "TimeOfDateEnd"
 			// :
 			// "23:59:59"
-			LOG.info("Datos Entrada Period : " + period.toString());
+			// LOG.info("Datos Entrada Period : " + period.toString());
 			return period;
 		} catch (Exception e) {
 			LOG.error(e);
