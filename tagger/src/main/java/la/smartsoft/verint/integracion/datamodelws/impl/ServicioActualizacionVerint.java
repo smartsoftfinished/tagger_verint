@@ -54,7 +54,6 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 			// SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS0000XXX");
 
 			LOG.info("Inicia Tagueo: ANI: " + sesion.getAni() + ", Incidente : " + sesion.getCd2());
-			LOG.info("Datos: " + sesion.toString());
 
 			try {
 				ObjectFactory objectFactory = new ObjectFactory();
@@ -161,7 +160,7 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				sb.append("		<Operation>Session Insert</Operation>"); // <!--Session Update-->
 				sb.append("		<Time>").append(getTimeString(new Date())).append("</Time>"); // <!--Time the
 																								// request is
-																								// made--> //TODO
+																								// made-->
 				sb.append("		<IsDirty>true</IsDirty>");
 				sb.append("</Header>");
 				sb.append("<Data>");
@@ -276,9 +275,7 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 						&& !"null".equals(sesion.getTotal_hold_time_in_seconds())) {
 					sb.append("		<TimeOffset>").append(sesion.getTotal_hold_time_in_seconds())
 							.append("</TimeOffset>"); // <!-- difference between local_start and audio_start -->
-														// TODO
 				} else {
-					LOG.info("Entro ELSE TimeOffset");
 					sb.append("		<TimeOffset>").append("0").append("</TimeOffset>"); // <!--audio_end_time-->
 				}
 				if (sesion.getAudio_ch_num() != null && !"".equals(sesion.getAudio_ch_num())

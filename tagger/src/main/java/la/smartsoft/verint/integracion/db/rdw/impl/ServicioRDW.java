@@ -79,7 +79,9 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
 					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
 					.addScalar(fechaInicio.getValor(), new TimestampType()).list();
+
 			session.close();
+
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();

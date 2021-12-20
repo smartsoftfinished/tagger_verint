@@ -62,6 +62,8 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 	@Override
 	public List<SessionVerint> consultarVerint(LlamadaDTO llamada, Token token) throws TokenInvalidoException {
 
+		ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+
 		try {
 			LOG.info("Inicia consultarVerint");
 
@@ -111,7 +113,6 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 						List<SessionVerint> sesiones = obtenerRespuestaSesiones(map);
 						SessionVerint sessionVerint;
 						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-						ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 						if (sesiones != null && !sesiones.isEmpty()) {
 							long dif = Long.MAX_VALUE;
 							Date llamadaDate = llamada.getFechaRegistro();
@@ -127,8 +128,12 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 									new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "CONSULTADO", null,
 											sessionVerint.getSid(), sessionVerint.getSite_id(), null, null));
 							return Arrays.asList(sessionVerint);
+						} else {
+							servicioAuditoria.actualizarAuditoria(
+									new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "SIN REGISTROS",
+											null, null, null, null, null));
+							return sesiones;
 						}
-						return sesiones;
 						// ResponseDynamicQuery responseDQ =
 						// response.readEntity(ResponseDynamicQuery.class);
 
@@ -152,6 +157,9 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			LOG.info("Fin consultarVerint");
 		} catch (Exception e) {
 			LOG.error("Error Consulta Verint");
+			servicioAuditoria.actualizarAuditoria(
+					new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "ERROR CONSULTA",
+							null, null, null, null, null));
 			LOG.error(e);
 		}
 

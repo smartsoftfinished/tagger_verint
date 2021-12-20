@@ -22,7 +22,6 @@ public class Test {
 			s.registrarAuditoria(r);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -35,7 +34,6 @@ public class Test {
 
 			System.out.print("Parametro " + servicioParametro.consultarParametro(4).toString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

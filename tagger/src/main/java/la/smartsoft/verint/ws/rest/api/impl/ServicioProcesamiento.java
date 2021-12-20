@@ -155,7 +155,6 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 			LOG.info("Sesiones no nula Inicio: " + llamada.getNumeroTelefonoIncidente());
 			for (SessionVerint sesion : sesiones) {
 				sesion.setCd2(llamada.getIncidentNumber());
-				LOG.info("Se asigna campo: " + CAMPO_INCIDENTE + llamada.getNumeroTelefonoIncidente());
 			}
 			LOG.info("Sesiones no nula Fin: " + llamada.getNumeroTelefonoIncidente());
 		} else {

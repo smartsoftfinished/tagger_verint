@@ -20,7 +20,6 @@ public class AuditoriaTaggingDTO {
 
 	public AuditoriaTaggingDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public AuditoriaTaggingDTO(Date fechaRegistro, String incidentNumber, String numeroTelefono, String estado,
