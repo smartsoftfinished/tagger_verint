@@ -88,9 +88,9 @@ public class ServicioAuditoria implements IVerintDB {
 					LOG.error(e2);
 				}
 			}
-			if (stmt != null) {
+			if (conn != null) {
 				try {
-					stmt.close();
+					conn.close();
 				} catch (Exception e2) {
 					LOG.error("Error cerrando Statement : " + audit.getIncidentNumber());
 					LOG.error(e2.getMessage());
