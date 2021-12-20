@@ -1,7 +1,6 @@
 package la.smartsoft.verint.ws.rest.api.impl;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -81,21 +80,14 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 			llamadas = rdwService.obtenerLlamadas(inicio.getTime(), fin.getTime());
 		} else {
 			ServicioParametro servicioParametro = new ServicioParametro();
-
-			LOG.info("Se intenta consumir el parametro segundos antes");
 			ParametroDTO parametroSA = servicioParametro.consultarParametro(ParametroDTO.SEGUNDOS_ATRAS);
 			int segundosAntes = -(Integer.parseInt(parametroSA.getValor()));
-			LOG.info("Se consume el parametro segundos antes " + segundosAntes);
 
-			LOG.info("Se intenta consumir el parametro rango busqueda");
 			ParametroDTO parametroRB = servicioParametro.consultarParametro(ParametroDTO.RANGO_CONSULTA);
 			int rangoBusqueda = Integer.parseInt(parametroRB.getValor());
-			LOG.info("Se consume el parametro rango busqueda " + rangoBusqueda);
 
 			calendar = Calendar.getInstance();
-			LOG.info("Fecha inicio antes de resta" + calendar.getTime());
 			calendar.add(Calendar.HOUR, segundosAntes);
-			LOG.info("Fecha inicio es " + calendar.getTime());
 
 			Date inicio = calendar.getTime();
 

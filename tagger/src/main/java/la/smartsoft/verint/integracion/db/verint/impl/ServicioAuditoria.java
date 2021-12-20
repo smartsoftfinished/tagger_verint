@@ -5,9 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,42 +34,44 @@ public class ServicioAuditoria implements IVerintDB {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
-
+			// Se crea la conexion con la base de datos de auditoria
 			conn = new Conexion().crearConexion();
 			conn.setAutoCommit(false);
 
+			// Se crea el query a ejecutar
 			String query = "INSERT INTO  AUDITORIA_TAGGING(FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID, FECHA_INCIDENTE, INTENTOS_TAGGING) VALUES ('"
 					+ audit.getFechaRegistro() + "', '" + audit.getIncidentNumber() + "', '" + audit.getNumeroTelefono()
 					+ "', '" + audit.getEstado() + "', '" + audit.getMensajeError() + "', " + audit.getSessionId()
 					+ ", " + audit.getSiteId() + ", '" + audit.getFechaIncidente() + "', " + audit.getIntentosTagging()
 					+ ")";
 
-			LOG.info(query);
-
+			// Se crea el Stament para ejecutar la query
 			stmt = conn.createStatement();
+			// Se ejecuta el query
 			stmt.executeUpdate(query);
 
-			System.out.print("Se ha registrado Exitosamente: ");
+			// ResultSet rs = stmt.executeQuery("select * from AUDITORIA_TAGGING where
+			// ID_AUDITORIA > 0");
 
-			ResultSet rs = stmt.executeQuery("select * from AUDITORIA_TAGGING  where ID_AUDITORIA > 0");
+			// if (rs.next()) {
 
-			if (rs.next()) {
+			// AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
+			// auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
+			// auditor.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
+			// auditor.setIncidentNumber(rs.getString("INCIDENT_NUMBER"));
+			// auditor.setNumeroTelefono(rs.getString("NUMERO_TELEFONO"));
+			// auditor.setEstado(rs.getString("ESTADO"));
+			// auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
+			// auditor.setSessionId(rs.getLong("SESSION_ID"));
+			// auditor.setSiteId(rs.getLong("SITE_ID"));
+			// auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
+			// auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
+			// auditoria.add(auditor);
+			// System.out.println(auditor);
+			// System.out.println("guardado ok: ");
+			// }
 
-				AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
-				auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
-				auditor.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
-				auditor.setIncidentNumber(rs.getString("INCIDENT_NUMBER"));
-				auditor.setNumeroTelefono(rs.getString("NUMERO_TELEFONO"));
-				auditor.setEstado(rs.getString("ESTADO"));
-				auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
-				auditor.setSessionId(rs.getLong("SESSION_ID"));
-				auditor.setSiteId(rs.getLong("SITE_ID"));
-				auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
-				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
-				auditoria.add(auditor);
-				System.out.println(auditor);
-				System.out.println("guardado ok: ");
-			}
+			// se realiza el commit de la transaccion
 			conn.commit();
 		} catch (Exception e) {
 			LOG.error("Termina con ERROR registrar : " + audit.getIncidentNumber());
@@ -106,9 +106,11 @@ public class ServicioAuditoria implements IVerintDB {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
-
+			// Se crea la conexion con la base de datos de auditoria
 			conn = new Conexion().crearConexion();
 			conn.setAutoCommit(false);
+
+			// Se crea el query a ejecutar, verificando los campos que traen datos
 			String query = "UPDATE AUDITORIA_TAGGING SET";
 			int fields = 0;
 			if (audit.getEstado() != null) {
@@ -132,32 +134,34 @@ public class ServicioAuditoria implements IVerintDB {
 				fields++;
 			}
 			query += " WHERE INCIDENT_NUMBER = '" + audit.getIncidentNumber() + "'";
-			LOG.info(query);
 
+			// Se crea el Stament para ejecutar la query
 			stmt = conn.createStatement();
+			// Se ejecuta el query
 			stmt.executeUpdate(query);
 
-			System.out.print("Se ha registrado Exitosamente: ");
+			// ResultSet rs = stmt.executeQuery("select * from AUDITORIA_TAGGING where
+			// ID_AUDITORIA > 0");
 
-			ResultSet rs = stmt.executeQuery("select * from AUDITORIA_TAGGING  where ID_AUDITORIA > 0");
+			// if (rs.next()) {
 
-			if (rs.next()) {
+			// AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
+			// auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
+			// auditor.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
+			// auditor.setIncidentNumber(rs.getString("INCIDENT_NUMBER"));
+			// auditor.setNumeroTelefono(rs.getString("NUMERO_TELEFONO"));
+			// auditor.setEstado(rs.getString("ESTADO"));
+			// auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
+			// auditor.setSessionId(rs.getLong("SESSION_ID"));
+			// auditor.setSiteId(rs.getLong("SITE_ID"));
+			// auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
+			// auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
+			// auditoria.add(auditor);
+			// System.out.println(auditor);
+			// System.out.println("actualizacion ok: ");
+			// }
 
-				AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
-				auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
-				auditor.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
-				auditor.setIncidentNumber(rs.getString("INCIDENT_NUMBER"));
-				auditor.setNumeroTelefono(rs.getString("NUMERO_TELEFONO"));
-				auditor.setEstado(rs.getString("ESTADO"));
-				auditor.setMensajeError(rs.getString("MENSAJE_ERROR"));
-				auditor.setSessionId(rs.getLong("SESSION_ID"));
-				auditor.setSiteId(rs.getLong("SITE_ID"));
-				auditor.setFechaIncidente(rs.getDate("FECHA_INCIDENTE"));
-				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
-				auditoria.add(auditor);
-				System.out.println(auditor);
-				System.out.println("actualizacion ok: ");
-			}
+			// se realiza el commit de la transaccion
 			conn.commit();
 
 		} catch (Exception e) {
@@ -283,9 +287,8 @@ public class ServicioAuditoria implements IVerintDB {
 			conn.setAutoCommit(false);
 			ServicioParametro servicioParametro = new ServicioParametro();
 
-			LOG.info("Se intenta consumir el parametro intentos maximos tagging");
+			// Se intenta consumir el parametro intentos maximos tagging
 			ParametroDTO maxIntentosPar = servicioParametro.consultarParametro(ParametroDTO.MAX_INTENTOS_TAGGING);
-			LOG.info("Se consume el parametro intentos maximos tagging");
 			int maxIntentos = Integer.parseInt(maxIntentosPar.getValor());
 
 			// Query
@@ -302,6 +305,7 @@ public class ServicioAuditoria implements IVerintDB {
 				LOG.info("NO se encuentran registros pendientes");
 			}
 
+			// Se crea cada uno de los objetos segun los resultados obtenidos
 			while (rs.next()) {
 				AuditoriaTaggingDTO auditor = new AuditoriaTaggingDTO();
 				auditor.setIdAuditoria(rs.getInt("ID_AUDITORIA"));
@@ -313,12 +317,10 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setSessionId(rs.getLong("SESSION_ID"));
 				auditor.setSiteId(rs.getLong("SITE_ID"));
 				Timestamp instant = rs.getTimestamp("FECHA_INCIDENTE");
-				LOG.info(instant);
 				auditor.setFechaIncidente(instant);
 				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
 				respuesta.add(auditor);
 				LOG.info("Se obtuvo el registro");
-				LOG.info(auditor);
 			}
 
 			LOG.info("Termina obtencion de pendientes");

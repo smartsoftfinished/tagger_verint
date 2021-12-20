@@ -41,12 +41,12 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 	public boolean actualizarVerint(List<SessionVerint> sesiones) {
 
 		LOG.info("Inicio actualizarVerint");
+		ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 		try {
-			IDataModelWS serviceVerint = getDataModelWCFPort(ENDPOINT_VERINT_SOAP_TAGGING, 60000);
 			LOG.info("Cantidad Sesiones : " + (sesiones != null ? sesiones.size() : " VACIAS"));
 			if (sesiones == null || sesiones.size() == 0)
 				return true;
-			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+			IDataModelWS serviceVerint = getDataModelWCFPort(ENDPOINT_VERINT_SOAP_TAGGING, 60000);
 
 			SessionVerint sesion = sesiones.get(0);
 			// SimpleDateFormat origen = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -290,7 +290,7 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 				sb.append("</Data>");
 				sb.append("</Envelope>");
 
-				LOG.info(sb.toString());
+				// LOG.info(sb.toString());
 
 				ArrayOfstring array = objectFactory.createArrayOfstring();
 				array.getString().add(sb.toString());
@@ -310,6 +310,9 @@ public class ServicioActualizacionVerint extends ConfiguracionApi implements IAc
 			// }//Fin for
 		} catch (Exception e) {
 			LOG.error("Error En Servicio Tagging 2");
+			SessionVerint sesion = sesiones.get(0);
+			servicioAuditoria.actualizarAuditoria(new AuditoriaTaggingDTO(null, sesion.getCd2(), null,
+					"ERROR TAGGER", e.getMessage(), null, null, null, null));
 			LOG.error(e);
 		}
 

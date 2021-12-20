@@ -1,6 +1,5 @@
 package la.smartsoft.verint.integracion.db.rdw.impl;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,9 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.helpers.DateTimeDateFormat;
 import org.hibernate.Session;
-import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -46,45 +43,39 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			LOG.info(sdf.format(inicio));
 			LOG.info(sdf.format(fin));
 
-			// Consulta para Pruebas
-
-			// if (!AMBIENTE_PRODUCCION) {
-			// return obtenerLlamadasDummy(inicio, fin);
-			// }
-			// Calendar calendar = Calendar.getInstance();
-			// calendar.add(Calendar.HOUR_OF_DAY, -23);
-			// inicio = calendar.getTime();
-			// Se consulta numero maximo de registros a buscar
 			ServicioParametro servicioParametro = new ServicioParametro();
 
-			LOG.info("Se intenta consumir el parametro registros maximos");
+			// Se intenta consumir el parametro registros maximos
 			ParametroDTO numRegistros = servicioParametro.consultarParametro(ParametroDTO.REGISTROS_MAXIMOS);
-			LOG.info("Se consume el parametro registros maximos");
-			LOG.info("Se intenta consumir el parametro nombre de tabla");
+
+			// Se intenta consumir el parametro nombre de tabla
 			ParametroDTO tabla = servicioParametro.consultarParametro(ParametroDTO.TABLA_RDW);
-			LOG.info("Se consume el parametro nombre de tabla");
-			LOG.info("Se intenta consumir el parametro nombre columna numero incidente");
+
+			// Se intenta consumir el parametro nombre columna numero incidente
 			ParametroDTO numIncidente = servicioParametro.consultarParametro(ParametroDTO.COL_NUM_INCIDENTE);
-			LOG.info("Se consume el parametro nombre columna numero incidente");
-			LOG.info("Se intenta consumir el parametro nombre columna telefono");
+
+			// Se intenta consumir el parametro nombre columna telefono
 			ParametroDTO telefono = servicioParametro.consultarParametro(ParametroDTO.COL_TELEFONO);
-			LOG.info("Se consume el parametro nombre columna telefono");
-			LOG.info("Se intenta consumir el parametro nombre columna fecha incidente");
+
+			// Se intenta consumir el parametro nombre columna fecha incidente
 			ParametroDTO fechaInicio = servicioParametro.consultarParametro(ParametroDTO.COL_FECHA_INICIO);
-			LOG.info("Se consume el parametro nombre columna fecha incidente");
-			LOG.info("Se intenta consumir el parametro nombre columna fecha fin");
+
+			// Se intenta consumir el parametro nombre columna fecha fin
 			ParametroDTO fechaFin = servicioParametro.consultarParametro(ParametroDTO.COL_FECHA_FIN);
-			LOG.info("Se consume el parametro nombre columna fecha fin");
+
 			// Implementar consulta SQLServer
 			Session session = HibernateUtil.getSessionFactory().openSession();
+			// Inicia la transaccion
 			session.beginTransaction();
+			// Se crea el query
 			String query = "select top " + numRegistros.getValor() + " " + numIncidente.getValor() + ", "
 					+ telefono.getValor() + ", DATEDIFF(second, " + fechaInicio.getValor() + ", " + fechaFin.getValor()
 					+ " ) as Duration, " + fechaInicio.getValor() + " from " + tabla.getValor() + " " + "where "
 					+ fechaInicio.getValor() + " >= '" + sdf.format(inicio) + "' and " + fechaInicio.getValor() + " < '"
 					+ sdf.format(fin) + "' and " + telefono.getValor() + " is not null order by "
 					+ fechaInicio.getValor() + " ASC";
-			LOG.info(query);
+
+			// Se ejecuta el query
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
 					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
 					.addScalar(fechaInicio.getValor(), new TimestampType()).list();
@@ -92,34 +83,58 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 			LOG.info("Se han encontrado: " + queryRta.size() + " registros en RDW");
 
 			ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+			// Se obtienen los registros que no han sido taggeados con exito y aun no se han
+			// intentado taggear el numero de veces maximo
 			List<AuditoriaTaggingDTO> pendientes = servicioAuditoria.consultarPendientes();
+			// Se declara la lista de llamadas a retornar
 			List<LlamadaDTO> lista = new ArrayList<LlamadaDTO>();
+
+			// Proceso para cada una de los registros obtenidos de RDW
 			for (Object[] object : queryRta) {
+				// Se verifica que no sea una fila nula
 				if (object != null) {
+					// Se crea objeto llamadaDTO
 					LlamadaDTO llamadaDTO = new LlamadaDTO();
+					// Se obtiene el numero de incidente
 					llamadaDTO.setIncidentNumber((String) object[0]);
+					// Se obtiene el numero telefonico y se eliminan la cadena 00 al inicio si este
+					// la contiene ademas de todo tipo de espacios
 					String numero = (String) object[1];
 					Pattern p = Pattern.compile("^00|[\\s]");
 					Matcher m = p.matcher(numero != null ? numero : "");
 					llamadaDTO.setNumeroTelefonoIncidente(m.replaceAll(""));
+					// Se obtiene la duracion del incidente
 					llamadaDTO.setDuracion((object[2] != null ? (Long) object[2] : null));
+					// Se obtiene la fecha del incidente
 					llamadaDTO.setFechaRegistro((object[3] != null ? (Date) object[3] : null));
+					// Se agrega la llamada a la respuesta
 					lista.add(llamadaDTO);
+					// Se realiza la auditoria de la llamada consultada
 					servicioAuditoria.registrarAuditoria(new AuditoriaTaggingDTO(new Date(),
 							llamadaDTO.getIncidentNumber(), llamadaDTO.getNumeroTelefonoIncidente(), "SIN PROCESAR",
 							null, null, null, llamadaDTO.getFechaRegistro(), 1l));
 				}
 			}
+
+			// Proceso para cada una de las llamadas que no han sido taggeados con exito
 			for (AuditoriaTaggingDTO auditoriaTaggingDTO : pendientes) {
+				// Se crea objeto llamadaDTO
 				LlamadaDTO llamadaDTO = new LlamadaDTO();
+				// Se obtiene el numero telefonico y se eliminan la cadena 00 al inicio si este
+				// la contiene ademas de todo tipo de espacios
 				Pattern p = Pattern.compile("^00|[\\s]");
 				Matcher m = p.matcher(
 						auditoriaTaggingDTO.getNumeroTelefono() != null ? auditoriaTaggingDTO.getNumeroTelefono() : "");
-				llamadaDTO.setIncidentNumber(m.replaceAll(""));
-				llamadaDTO.setNumeroTelefonoIncidente(auditoriaTaggingDTO.getNumeroTelefono());
+				llamadaDTO.setNumeroTelefonoIncidente(m.replaceAll(""));
+				// Se obtiene el numero de incidente
+				llamadaDTO.setIncidentNumber(auditoriaTaggingDTO.getIncidentNumber());
+				// Se obtiene la duracion del incidente
 				llamadaDTO.setDuracion(0l);
+				// Se obtiene la fecha del incidente
 				llamadaDTO.setFechaRegistro(auditoriaTaggingDTO.getFechaIncidente());
+				// Se agrega la llamada a la respuesta
 				lista.add(llamadaDTO);
+				// Se actualiza la auditoria de la llamada consultada
 				servicioAuditoria
 						.actualizarAuditoria(new AuditoriaTaggingDTO(null, auditoriaTaggingDTO.getIncidentNumber(),
 								null, null, null, null, null, null, auditoriaTaggingDTO.getIntentosTagging() + 1));
@@ -150,7 +165,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 		List<LlamadaDTO> llamadas = new ArrayList<LlamadaDTO>();
 
 		LlamadaDTO llamada1 = new LlamadaDTO();
-		ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
+		// ServicioAuditoria servicioAuditoria = new ServicioAuditoria();
 
 		// llamada1.setNumeroTelefonoIncidente("3228857088");
 		// llamada1.setIncidentNumber("SUR-01462008-21");
