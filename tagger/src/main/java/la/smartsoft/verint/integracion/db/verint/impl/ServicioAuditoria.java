@@ -294,7 +294,6 @@ public class ServicioAuditoria implements IVerintDB {
 			// Query
 			String query = "SELECT ID_AUDITORIA, FECHA_REGISTRO,INCIDENT_NUMBER,NUMERO_TELEFONO,ESTADO,MENSAJE_ERROR, SESSION_ID, SITE_ID, FECHA_INCIDENTE, INTENTOS_TAGGING FROM AUDITORIA_TAGGING WHERE ESTADO != 'PROCESADO' AND INTENTOS_TAGGING <= "
 					+ maxIntentos;
-			LOG.info(query);
 			// Se crea Prepared Statement
 			stmt = conn.prepareStatement(query);
 
@@ -320,7 +319,6 @@ public class ServicioAuditoria implements IVerintDB {
 				auditor.setFechaIncidente(instant);
 				auditor.setIntentosTagging(rs.getLong("INTENTOS_TAGGING"));
 				respuesta.add(auditor);
-				LOG.info("Se obtuvo el registro");
 			}
 
 			LOG.info("Termina obtencion de pendientes");

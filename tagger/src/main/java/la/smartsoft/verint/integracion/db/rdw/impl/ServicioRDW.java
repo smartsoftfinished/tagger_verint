@@ -114,7 +114,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					// Se realiza la auditoria de la llamada consultada
 					servicioAuditoria.registrarAuditoria(new AuditoriaTaggingDTO(new Date(),
 							llamadaDTO.getIncidentNumber(), llamadaDTO.getNumeroTelefonoIncidente(), "SIN PROCESAR",
-							null, null, null, llamadaDTO.getFechaRegistro(), 1l));
+							null, null, null, llamadaDTO.getFechaRegistro(), 1L));
 				}
 			}
 
@@ -131,7 +131,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 				// Se obtiene el numero de incidente
 				llamadaDTO.setIncidentNumber(auditoriaTaggingDTO.getIncidentNumber());
 				// Se obtiene la duracion del incidente
-				llamadaDTO.setDuracion(0l);
+				llamadaDTO.setDuracion(0L);
 				// Se obtiene la fecha del incidente
 				llamadaDTO.setFechaRegistro(auditoriaTaggingDTO.getFechaIncidente());
 				// Se agrega la llamada a la respuesta
@@ -142,7 +142,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 								null, null, null, null, null, null, auditoriaTaggingDTO.getIntentosTagging() + 1));
 			}
 			LOG.info("Fin obtenerLlamadas");
-			LOG.info("Cantidad Registros: " + (lista != null ? lista.size() : "VACIO"));
+			LOG.info("Cantidad Registros: " +  lista.size());
 
 			return lista;
 		} catch (Exception e) {

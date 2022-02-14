@@ -118,6 +118,9 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 							Date llamadaDate = llamada.getFechaRegistro();
 							sessionVerint = sesiones.get(0);
 							for (SessionVerint sv : sesiones) {
+								if(sv.getAUDIO_START_TIME().length() == 19) sv.setAUDIO_START_TIME(sv.getAUDIO_START_TIME() + ".");
+								while (sv.getAUDIO_START_TIME().length() < 23 && sv.getAUDIO_START_TIME().length() > 19)
+									sv.setAUDIO_START_TIME(sv.getAUDIO_START_TIME() + "0") ;
 								Date svf = format.parse(sv.getAUDIO_START_TIME());
 								if (Math.abs(svf.getTime() - llamadaDate.getTime()) < dif) {
 									sessionVerint = sv;
@@ -159,7 +162,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 			LOG.error("Error Consulta Verint");
 			servicioAuditoria.actualizarAuditoria(
 					new AuditoriaTaggingDTO(null, llamada.getIncidentNumber(), null, "ERROR CONSULTA",
-							null, null, null, null, null));
+							e.toString(), null, null, null, null));
 			LOG.error(e);
 		}
 
@@ -306,6 +309,9 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 
 			// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",
 			// new Locale("es_CO"));
+			if(fechaInicio.length() == 19) fechaInicio += ".";
+			while (fechaInicio.length() < 22 && fechaInicio.length() > 19)
+				fechaInicio += "0";
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", new Locale("es_CO"));
 			format.setTimeZone(TimeZone.getTimeZone("UTC"));
 			Date date = format.parse(fechaInicio);
@@ -317,7 +323,7 @@ public class ServicioConsultasVerint extends ConfiguracionApi implements IConsul
 		} catch (Exception e) {
 			LOG.error("Error Obteniendo Fecha Final", e);
 		}
-		return "";
+		return fechaInicio;
 
 	}
 
