@@ -87,6 +87,8 @@ public class ServicioProcesamiento extends ConfiguracionApi implements IProcesam
 			int rangoBusqueda = Integer.parseInt(parametroRB.getValor());
 
 			calendar = Calendar.getInstance();
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
 			calendar.add(Calendar.HOUR, segundosAntes);
 
 			Date inicio = calendar.getTime();

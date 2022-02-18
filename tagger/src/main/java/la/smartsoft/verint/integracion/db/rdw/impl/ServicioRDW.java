@@ -75,6 +75,8 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 					+ sdf.format(fin) + "' and " + telefono.getValor() + " is not null order by "
 					+ fechaInicio.getValor() + " ASC";
 
+			LOG.info("El query a ejecutar en RDW es: " + query);
+
 			// Se ejecuta el query
 			List<Object[]> queryRta = session.createSQLQuery(query).addScalar(numIncidente.getValor(), new StringType())
 					.addScalar(telefono.getValor(), new StringType()).addScalar("Duration", new LongType())
@@ -142,7 +144,7 @@ public class ServicioRDW extends ConfiguracionApi implements IRDW {
 								null, null, null, null, null, null, auditoriaTaggingDTO.getIntentosTagging() + 1));
 			}
 			LOG.info("Fin obtenerLlamadas");
-			LOG.info("Cantidad Registros: " +  lista.size());
+			LOG.info("Cantidad Registros: " + lista.size());
 
 			return lista;
 		} catch (Exception e) {
